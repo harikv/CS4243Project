@@ -67,8 +67,8 @@ class Rectangle(Shape):
         pts = []
 
         # TODO get some heavy optimization going on here
-        for i in np.arange(0.0, self._side1.len(), 1.0 / ppm):
-            for j in np.arange(0.0, self._side2.len(), 1.0 / ppm):
+        for i in np.arange(0.0, self._side1.len()+1.0/ppm, 1.0 / ppm):
+            for j in np.arange(0.0, self._side2.len()+1.0/ppm, 1.0 / ppm):
                 newvec = self._side1.scale(i / self._side1.len()) + self._side2.scale(j / self._side2.len())
                 newpoint = self.baseVec + newvec
 

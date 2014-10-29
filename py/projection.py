@@ -3,8 +3,6 @@ import numpy as np
 import math
 import cv2
 
-# Parameters
-
 def dotproduct(v1, v2):
   return sum((a*b) for a, b in zip(v1, v2))
 
@@ -109,6 +107,12 @@ def perspective_proj(point, camera_position, camera_axes, viewing_angle):
 
 
 def project(points, cam_pos, viewing_angle):
+    print max([a[0] for a in points])
+    print min([a[0] for a in points])
+    print max([a[1] for a in points])
+    print min([a[1] for a in points])
+    print max([a[2] for a in points])
+    print min([a[2] for a in points])
     # TODO i think i mixed up x and y coordinates in the vectors
     camera_orientation = np.matrix([[1,0,0],[0,0,1],[0,1,0]])
     # camera_orientation = quat2rot(rotation_quaternion([1, 0, 0], 90)) * np.matrix(np.identity(3))
@@ -119,28 +123,34 @@ def project(points, cam_pos, viewing_angle):
 
     op = []
     pp = []
+    x_pp = []
+    y_pp = []
     for pt in np.array(points):
         op.append(orthographic_proj(pt, cam_pos, camera_orientation))
         pt = perspective_proj(pt, cam_pos, camera_orientation, viewing_angle)
         if(pt):
             pp.append(pt)
+            x_pp.append((pt[0]))
+            y_pp.append((pt[1]))
+    max_x = max(x_pp)
+    min_x = min(x_pp)
+    max_y = max(y_pp)
+    min_y = min(y_pp)
+    print max_x, min_x, max_y, min_y
+    plt.axis((0, 200, 0, 150))
+
+    plt.figure(1)
+    plt.subplot(1, 1, 1)
+    plt.margins(0.1, 0.1)
+    plt.plot([((x[0]+60)/119)*1632 for x in op], [((y[1]+27)/27.075)*1224 for y in op], 'bo', markersize=2)
+
+    plt.figure(2)
+    plt.subplot(1, 1, 1)
+    plt.margins(0.1, 0.1)
+    plt.plot([((x[0]+60)/119)*200 for x in pp], [((y[1]+27)/77)*150 for y in pp], 'bo', markersize=2)
 
 
-
-    # plt.axis((-1.333, 1.333, -1, 1))
-    #
-    # plt.figure(1)
-    # plt.subplot(1, 1, 1)
-    # plt.margins(0.1, 0.1)
-    # plt.plot([x[0] for x in op], [y[1] for y in op], 'bo', markersize=2)
-    #
-    # plt.figure(2)
-    # plt.subplot(1, 1, 1)
-    # plt.margins(0.1, 0.1)
-    # plt.plot([x[0] for x in pp], [y[1] for y in pp], 'bo', markersize=2)
-    #
-    #
-    # op_figure.suptitle("Orthographic Projection")
-    # op_figure.savefig('op.png')
-    # pp_figure.suptitle("Perspective Projection")
-    # pp_figure.savefig('pp.png')
+    op_figure.suptitle("Orthographic Projection")
+    op_figure.savefig('op.png')
+    pp_figure.suptitle("Perspective Projection")
+    pp_figure.savefig('pp.png')

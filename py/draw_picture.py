@@ -21,8 +21,9 @@ def main():
     shapes.append(church_front_facade)
 
     pts = []
-    for x in [s.get_points(ppm=6) for s in shapes]:
+    for x in [s.get_points(ppm=3) for s in shapes]:
         pts.extend(x)
+
 
     project(pts, [0, -20, 1.5], viewing_angle_in_radians)
 

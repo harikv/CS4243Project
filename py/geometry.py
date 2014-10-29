@@ -21,6 +21,15 @@ class Vector:
     def dist(self, other):
         return (self - other).len()
 
+    # def dotproduct(self, v1, v2):
+    #   return sum((a*b) for a, b in zip(v1, v2))
+    #
+    # def length(self, v):
+    #   return math.sqrt(self.dotproduct(v, v))
+    #
+    # def angle(self, v1, v2):
+    #   return math.acos(self.dotproduct(v1, v2) / (self.length(v1) * self.length(v2)))
+
     def __add__(self, other):
         return Vector(self.x + other.x, self.y + other.y, self.z + other.z)
 

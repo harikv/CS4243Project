@@ -1,6 +1,8 @@
 from projection import project
 from geometry import Vector, Rectangle, Triangle
+import math
 
+viewing_angle_in_radians = math.pi/2
 
 def main():
     # First try to draw scene
@@ -19,10 +21,10 @@ def main():
     shapes.append(church_front_facade)
 
     pts = []
-    for x in [s.get_points(ppm=1.5) for s in shapes]:
+    for x in [s.get_points(ppm=6) for s in shapes]:
         pts.extend(x)
 
-    project(pts, [0, -30, 1.5])
+    project(pts, [0, -20, 1.5], viewing_angle_in_radians)
 
 
 if __name__ == '__main__':

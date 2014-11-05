@@ -159,6 +159,7 @@ columns=img.shape[1]
 cv2.namedWindow('image')
 cv2.setMouseCallback('image',draw_circle)
 startPolygon = True
+print 'Select Polygon'
 while(1):
     cv2.imshow('image',img)
     k = cv2.waitKey(1) & 0xFF
@@ -169,14 +170,18 @@ while(1):
         else:
             print "Mode change to Horizontal"
     elif k == ord('s'):
+        print "Resetted"
         polygon = []
         startPolygon = True
         img = cv2.imread("../project_rs.jpg",cv2.CV_LOAD_IMAGE_COLOR)
     elif k == ord('e'):
+        print "Started Processing"
         processPolygon()
     elif k == ord('o'):
+        print 'Vertical Flag Toggled'
         parallelX = True
     elif k == ord('p'):
+        print 'Horizontal Flag Toggled'
         parallelY = True
     elif k == 27:
         break

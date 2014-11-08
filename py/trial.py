@@ -26,9 +26,9 @@
 
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
+import csv
 from matplotlib.path import Path
-import matplotlib.patches as patches
+
 model = []
 polygon = []
 drawing = False # true if mouse is pressed
@@ -88,7 +88,13 @@ def startScanLine(points):
         numberHorizontalDivisions = len(points[index])
         array3DHorizontal = getDivisions(array3D1[index], array3D2[index], numberHorizontalDivisions)
         model.extend(zip(points[index], array3DHorizontal, zip([img[x[1]][x[0]][0] for x in points[index]], [img[x[1]][x[0]][1] for x in points[index]], [img[x[1]][x[0]][2] for x in points[index]])))
-    print model
+    with open('points.csv', 'wb') as csvfile:
+        writer = csv.writer(csvfile, delimiter=' ',
+                                quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        for index in range(len(model)):
+            writer.writerow([model[index][0][0], model[index][0][0], model[index][1][0], model[index][1][1], model[index][1][2], model[index][2][0], model[index][2][1], model[index][2][2]])
+
+
     # perpendicularDirection = int(raw_input('Enter the perpendicular direction\n'))
     # diff = 1
     # start = 0

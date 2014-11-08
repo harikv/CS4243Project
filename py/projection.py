@@ -4,13 +4,15 @@ import math
 import cv2
 
 def dotproduct(v1, v2):
-  return sum((a*b) for a, b in zip(v1, v2))
+    return sum((a*b) for a, b in zip(v1, v2))
 
 def length(v):
-  return math.sqrt(dotproduct(v, v))
+    return math.sqrt(dotproduct(v, v))
 
 def angle(v1, v2):
-  return math.acos(dotproduct(v1, v2) / (length(v1) * length(v2)))
+    if (length(v1)*length(v2) == 0):
+        return 0
+    return math.acos(dotproduct(v1, v2) / (length(v1) * length(v2)))
 
 def quatmult(q1, q2):
     #quaternion multiplication
@@ -104,6 +106,19 @@ def perspective_proj(point, camera_position, camera_axes, viewing_angle):
     except ZeroDivisionError:
         return None
     return projected_point
+
+
+def return_projected_point(point, cam_pos, viewing_angle):
+    camera_orientation = np.matrix([[1,0,0],[0,0,1],[0,1,0]])
+    op = []
+    pp = []
+        # op.append(orthographic_proj(pt, cam_pos, camera_orientation))
+    pt = perspective_proj(point, cam_pos, camera_orientation, viewing_angle)
+    if(pt):
+        pp = pt
+
+    return pp
+
 
 
 def project(points, cam_pos, viewing_angle):

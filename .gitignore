@@ -1,0 +1,5 @@
+#Ignore Image files
+*.jpg
+*.png
+*.jpeg
+.DS_Store

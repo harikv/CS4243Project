@@ -108,10 +108,9 @@ def perspective_proj(point, camera_position, camera_axes, viewing_angle):
     return projected_point
 
 
-def return_projected_point(point, cam_pos, viewing_angle):
-    camera_orientation = np.matrix([[1,0,0],[0,0,1],[0,1,0]])
+def return_projected_point(point, cam_pos, viewing_angle, camera_orientation):
     op = []
-    pp = []
+    pp = None
         # op.append(orthographic_proj(pt, cam_pos, camera_orientation))
     pt = perspective_proj(point, cam_pos, camera_orientation, viewing_angle)
     if(pt):

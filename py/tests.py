@@ -25,9 +25,11 @@ class TestCutoffPointCalculation(unittest.TestCase):
         # Define the camera position to be in front of the square
         cam_pos = np.array([0, -15, 0])
 
-        new_corners, _, _ = get_cutoff_points(self.flat_square, cam_pos, self.straight_cam_orient)
+        new_corners, lines, factors = get_cutoff_points(self.flat_square, cam_pos, self.straight_cam_orient)
 
         self.assertTrue(np.array_equal(new_corners, self.flat_square))
+        self.assertEqual(lines, [0, 1, 2, 3])
+        self.assertEqual(factors, [0, 0, 0, 0])
 
     def test_one_corner_behind(self):
         """
@@ -43,7 +45,7 @@ class TestCutoffPointCalculation(unittest.TestCase):
             [1, 1, 0]    # Optical axis
         ])
 
-        new_corners, _, _ = get_cutoff_points(self.flat_square, cam_pos, cam_orient)
+        new_corners, lines, factors = get_cutoff_points(self.flat_square, cam_pos, cam_orient)
         self.assertEqual(len(new_corners), 5)
         self.assertTrue(np.array_equal(new_corners, np.array([
             [-10, -9, 0],   # New corner
@@ -52,6 +54,8 @@ class TestCutoffPointCalculation(unittest.TestCase):
             [10, -10, 0],   # Corner C4
             [-9, -10, 0]    # New corner
         ])))
+        self.assertEqual(lines, [0, 1, 2, 3, 3])
+        self.assertEqual(factors, [0.05, 0, 0, 0, 0.95])
 
     def test_two_corners_behind(self):
         """
@@ -61,7 +65,7 @@ class TestCutoffPointCalculation(unittest.TestCase):
         # Position camera at origin
         cam_pos = np.array([0, 0, 0])
 
-        new_corners, _, _ = get_cutoff_points(self.flat_square, cam_pos, self.straight_cam_orient)
+        new_corners, lines, factors = get_cutoff_points(self.flat_square, cam_pos, self.straight_cam_orient)
         self.assertEqual(len(new_corners), 4)
         self.assertTrue(np.array_equal(new_corners, np.array([
             [-10, 0, 0],    # New corner
@@ -69,8 +73,8 @@ class TestCutoffPointCalculation(unittest.TestCase):
             [10, 10, 0],    # Corner C3
             [10, 0, 0]      # New corner
         ])))
-        # self.assertTrue(np.array_equal(intersections[0], np.array([-10, 0, 0])))
-        # self.assertTrue(np.array_equal(intersections[1], np.array([10, 0, 0])))
+        self.assertEqual(lines, [0, 1, 2, 2])
+        self.assertEqual(factors, [0.5, 0, 0, 0.5])
 
     def test_three_corners_behind(self):
         """
@@ -86,13 +90,15 @@ class TestCutoffPointCalculation(unittest.TestCase):
             [-1, -1, 0]  # Optical axis
         ])
 
-        new_corners, _, _ = get_cutoff_points(self.flat_square, cam_pos, cam_orient)
+        new_corners, lines, factors = get_cutoff_points(self.flat_square, cam_pos, cam_orient)
         self.assertEqual(len(new_corners), 3)
         self.assertTrue(np.array_equal(new_corners, np.array([
             [-10, -10, 0],  # Corner C1
             [-10, -9, 0],   # New corner
             [-9, -10, 0]    # New corner
         ])))
+        self.assertEqual(lines, [0, 0, 3])
+        self.assertEqual(factors, [0, 0.05, 0.95])
 
     def test_cut_directly_in_corner(self):
         """
@@ -109,13 +115,15 @@ class TestCutoffPointCalculation(unittest.TestCase):
             [1, 1, 0]    # Optical axis
         ])
 
-        new_corners, _, _ = get_cutoff_points(self.flat_square, cam_pos, cam_orient)
+        new_corners, lines, factors = get_cutoff_points(self.flat_square, cam_pos, cam_orient)
         self.assertEqual(len(new_corners), 3)
         self.assertTrue(np.array_equal(new_corners, np.array([
             [-10, 10, 0],   # Corner C2
             [10, 10, 0],    # Corner C3
             [10, -10, 0]    # Corner C4
         ])))
+        self.assertEqual(lines, [1, 2, 3])
+        self.assertEqual(factors, [0, 0, 0])
 
 
 if __name__ == '__main__':

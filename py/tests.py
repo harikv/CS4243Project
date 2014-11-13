@@ -1,7 +1,7 @@
 import unittest
 
 import numpy as np
-from draw_picture import get_cutoff_points
+from draw_picture import get_cutoff_points, get_corners_of_cut_texture
 
 
 class TestCutoffPointCalculation(unittest.TestCase):
@@ -124,6 +124,32 @@ class TestCutoffPointCalculation(unittest.TestCase):
         ])))
         self.assertEqual(lines, [1, 2, 3])
         self.assertEqual(factors, [0, 0, 0])
+
+
+class TestCutoffTextures(unittest.TestCase):
+    def test_cut_texture(self):
+        # Mock output from the get_cutoff_points function
+        lines = [0, 1, 2, 3, 3]
+        factors = [0.05, 0, 0, 0, 0.95]
+
+        # The texture polygon
+        texture = np.array([
+            [-5, -5, 0],  # Corner 1
+            [-5, 5, 0],   # Corner 2
+            [5, 5, 0],    # Corner 3
+            [5, -5, 0]    # Corner 4
+        ])
+
+        # Find new corners and assert correctness
+        new_corners = get_corners_of_cut_texture(texture, lines, factors)
+        self.assertEqual(len(new_corners), 5)
+        self.assertTrue(np.array_equal(new_corners, np.array([
+            [-5, -4.5, 0],  # Corner
+            [-5, 5, 0],     # Corner 2
+            [5, 5, 0],      # Corner 3
+            [5, -5, 0],     # Corner 4
+            [-4.5, -5, 0]   # Corner
+        ])))
 
 
 if __name__ == '__main__':

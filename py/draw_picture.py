@@ -37,7 +37,7 @@ def get_cutoff_points(points, cam_pos, cam_orient):
     :param cam_orient: the orientation of the camera
     :return: a 3-tuple containing:
                the corners of the sliced polygon
-               which line in the original polygon the corner lies on (-1 for existing corners)
+               which line in the original polygon the corner lies on
                a factor telling how far up the line the new corner is located
 
     """
@@ -59,7 +59,7 @@ def get_cutoff_points(points, cam_pos, cam_orient):
         # Add corner if it is not behind the camera
         if not point_behind_camera[i]:
             new_corners.append(points[i])
-            line_segments.append(-1)
+            line_segments.append(i)
             factors.append(0)
 
         # If the current point are in front of the camera and the next is behind the line is cut
@@ -79,6 +79,23 @@ def get_cutoff_points(points, cam_pos, cam_orient):
                 factors.append(factor)
 
     return new_corners, line_segments, factors
+
+
+def get_corners_of_cut_texture(points, lines, factors):
+    """
+    Find the new corners of a polygon given a list of line indices and factors
+    describing how far up the line to put the new corner.
+    :param points: corner points of the polygon
+    :param lines: indices of the lines to cut
+    :param factors: how far up the line a cut should be made (one factor pr. line)
+    :return: the corners of the cut polygon
+    """
+    def cut_line(info):
+        next_i = (info[0] + 1) % len(points)
+        line_direction = points[next_i] - points[info[0]]
+        return info[1] * line_direction + points[info[0]]
+
+    return [cut_line(x) for x in zip(lines, factors)]
 
 if __name__ == '__main__':
     main()

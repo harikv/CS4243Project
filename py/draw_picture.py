@@ -32,10 +32,14 @@ def get_cutoff_points(points, cam_pos, cam_orient):
     """
     If some of the points are behind the camera, this function finds out where the
     image plane cuts the object.
-    :param points: four points in 3D space defining a rectangle
+    :param points: four points in 3D space defining a polygon
     :param cam_pos: the position of the camera
     :param cam_orient: the orientation of the camera
-    :return: the points where the rectangle cuts the image plane if any
+    :return: a 3-tuple containing:
+               the corners of the sliced polygon
+               which line in the original polygon the corner lies on (-1 for existing corners)
+               a factor telling how far up the line the new corner is located
+
     """
     # Check if any points are behind the camera
     def is_behind_camera(point):
@@ -44,14 +48,20 @@ def get_cutoff_points(points, cam_pos, cam_orient):
         return in_angle > math.pi / 2
 
     point_behind_camera = [is_behind_camera(p) for p in points]
-    if not any(point_behind_camera):
-        # No points are behind the camera
-        return []
 
     # One or more corners are behind the camera check all lines
-    intersections = []
+    new_corners = []
+    line_segments = []
+    factors = []
     for i in range(len(points)):
         next_i = (i + 1) % len(points)
+
+        # Add corner if it is not behind the camera
+        if not point_behind_camera[i]:
+            new_corners.append(points[i])
+            line_segments.append(-1)
+            factors.append(0)
+
         # If the current point are in front of the camera and the next is behind the line is cut
         if point_behind_camera[i] is not point_behind_camera[next_i]:
             # Calculate where the line between the points intersects with the camera plane
@@ -60,9 +70,15 @@ def get_cutoff_points(points, cam_pos, cam_orient):
             denominator = dotproduct(line_direction, cam_orient[2].getA1())
             factor = float(nominator) / denominator
             intersection = (factor * line_direction + points[i])
-            intersections.append(intersection)
 
-    return intersections
+            # If the factor is 0 or 1, the camera plane cuts directly through an existing corner.
+            # This will be added in the next iteration, so don't add it here.
+            if 0 < factor < 1:
+                new_corners.append(intersection)
+                line_segments.append(i)
+                factors.append(factor)
+
+    return new_corners, line_segments, factors
 
 if __name__ == '__main__':
     main()

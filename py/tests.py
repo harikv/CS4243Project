@@ -25,8 +25,9 @@ class TestCutoffPointCalculation(unittest.TestCase):
         # Define the camera position to be in front of the square
         cam_pos = np.array([0, -15, 0])
 
-        intersections = get_cutoff_points(self.flat_square, cam_pos, self.straight_cam_orient)
-        self.assertEqual(intersections, [])
+        new_corners, _, _ = get_cutoff_points(self.flat_square, cam_pos, self.straight_cam_orient)
+
+        self.assertTrue(np.array_equal(new_corners, self.flat_square))
 
     def test_one_corner_behind(self):
         """
@@ -42,10 +43,15 @@ class TestCutoffPointCalculation(unittest.TestCase):
             [1, 1, 0]    # Optical axis
         ])
 
-        intersections = get_cutoff_points(self.flat_square, cam_pos, cam_orient)
-        self.assertEqual(len(intersections), 2)
-        self.assertTrue(np.array_equal(intersections[0], np.array([-10, -9, 0])))
-        self.assertTrue(np.array_equal(intersections[1], np.array([-9, -10, 0])))
+        new_corners, _, _ = get_cutoff_points(self.flat_square, cam_pos, cam_orient)
+        self.assertEqual(len(new_corners), 5)
+        self.assertTrue(np.array_equal(new_corners, np.array([
+            [-10, -9, 0],   # New corner
+            [-10, 10, 0],   # Corner C2
+            [10, 10, 0],    # Corner C3
+            [10, -10, 0],   # Corner C4
+            [-9, -10, 0]    # New corner
+        ])))
 
     def test_two_corners_behind(self):
         """
@@ -55,10 +61,16 @@ class TestCutoffPointCalculation(unittest.TestCase):
         # Position camera at origin
         cam_pos = np.array([0, 0, 0])
 
-        intersections = get_cutoff_points(self.flat_square, cam_pos, self.straight_cam_orient)
-        self.assertEqual(len(intersections), 2)
-        self.assertTrue(np.array_equal(intersections[0], np.array([-10, 0, 0])))
-        self.assertTrue(np.array_equal(intersections[1], np.array([10, 0, 0])))
+        new_corners, _, _ = get_cutoff_points(self.flat_square, cam_pos, self.straight_cam_orient)
+        self.assertEqual(len(new_corners), 4)
+        self.assertTrue(np.array_equal(new_corners, np.array([
+            [-10, 0, 0],    # New corner
+            [-10, 10, 0],   # Corner C2
+            [10, 10, 0],    # Corner C3
+            [10, 0, 0]      # New corner
+        ])))
+        # self.assertTrue(np.array_equal(intersections[0], np.array([-10, 0, 0])))
+        # self.assertTrue(np.array_equal(intersections[1], np.array([10, 0, 0])))
 
     def test_three_corners_behind(self):
         """
@@ -74,10 +86,13 @@ class TestCutoffPointCalculation(unittest.TestCase):
             [-1, -1, 0]  # Optical axis
         ])
 
-        intersections = get_cutoff_points(self.flat_square, cam_pos, cam_orient)
-        self.assertEqual(len(intersections), 2)
-        self.assertTrue(np.array_equal(intersections[0], np.array([-10, -9, 0])))
-        self.assertTrue(np.array_equal(intersections[1], np.array([-9, -10, 0])))
+        new_corners, _, _ = get_cutoff_points(self.flat_square, cam_pos, cam_orient)
+        self.assertEqual(len(new_corners), 3)
+        self.assertTrue(np.array_equal(new_corners, np.array([
+            [-10, -10, 0],  # Corner C1
+            [-10, -9, 0],   # New corner
+            [-9, -10, 0]    # New corner
+        ])))
 
     def test_cut_directly_in_corner(self):
         """
@@ -94,10 +109,13 @@ class TestCutoffPointCalculation(unittest.TestCase):
             [1, 1, 0]    # Optical axis
         ])
 
-        intersections = get_cutoff_points(self.flat_square, cam_pos, cam_orient)
-        self.assertEqual(len(intersections), 2)
-        self.assertTrue(np.array_equal(intersections[0], np.array([-10, 10, 0])))
-        self.assertTrue(np.array_equal(intersections[1], np.array([10, -10, 0])))
+        new_corners, _, _ = get_cutoff_points(self.flat_square, cam_pos, cam_orient)
+        self.assertEqual(len(new_corners), 3)
+        self.assertTrue(np.array_equal(new_corners, np.array([
+            [-10, 10, 0],   # Corner C2
+            [10, 10, 0],    # Corner C3
+            [10, -10, 0]    # Corner C4
+        ])))
 
 
 if __name__ == '__main__':

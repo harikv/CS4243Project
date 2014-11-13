@@ -3,3 +3,7 @@
 *.png
 *.jpeg
 .DS_Store
+
+.idea
+*.pyc
+venv

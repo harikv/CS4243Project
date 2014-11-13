@@ -1,0 +1,104 @@
+import unittest
+
+import numpy as np
+from draw_picture import get_cutoff_points
+
+
+class TestCutoffPointCalculation(unittest.TestCase):
+    def setUp(self):
+        # Create a flat square with side lengths 20 and center in (0, 0, 0)
+        self.flat_square = np.array([
+            [-10, -10, 0],  # Corner C1
+            [-10, 10, 0],   # Corner C2
+            [10, 10, 0],    # Corner C3
+            [10, -10, 0]    # Corner C4
+        ])
+
+        # Define the orientation to be looking straight at (0, 0, 0)
+        self.straight_cam_orient = np.matrix([
+            [1, 0, 0],  # Right side of the camera
+            [0, 0, 1],  # Top of the camera
+            [0, 1, 0]   # Optical axis
+        ])
+
+    def test_all_corners_in_front(self):
+        # Define the camera position to be in front of the square
+        cam_pos = np.array([0, -15, 0])
+
+        intersections = get_cutoff_points(self.flat_square, cam_pos, self.straight_cam_orient)
+        self.assertEqual(intersections, [])
+
+    def test_one_corner_behind(self):
+        """
+        The camera is positioned just in front of C1 and yaw'ed 45 degrees. This puts
+        C1 behind the camera.
+        """
+        cam_pos = np.array([-9, -10, 0])
+
+        # Yaw -45 degrees
+        cam_orient = np.matrix([
+            [1, -1, 0],  # Right side of the camera
+            [0, 0, 1],   # Top of the camera
+            [1, 1, 0]    # Optical axis
+        ])
+
+        intersections = get_cutoff_points(self.flat_square, cam_pos, cam_orient)
+        self.assertEqual(len(intersections), 2)
+        self.assertTrue(np.array_equal(intersections[0], np.array([-10, -9, 0])))
+        self.assertTrue(np.array_equal(intersections[1], np.array([-9, -10, 0])))
+
+    def test_two_corners_behind(self):
+        """
+        Set the camera in the middle of the square and point it straight forward. This
+        will cut the square in half.
+        """
+        # Position camera at origin
+        cam_pos = np.array([0, 0, 0])
+
+        intersections = get_cutoff_points(self.flat_square, cam_pos, self.straight_cam_orient)
+        self.assertEqual(len(intersections), 2)
+        self.assertTrue(np.array_equal(intersections[0], np.array([-10, 0, 0])))
+        self.assertTrue(np.array_equal(intersections[1], np.array([10, 0, 0])))
+
+    def test_three_corners_behind(self):
+        """
+        Set the camera on the border between C1 and C4 and turn it away from the origin.
+        This will make all corners except for C1 be behind the camera.
+        """
+        cam_pos = np.array([-9, -10, 0])
+
+        # Yaw 135 degrees
+        cam_orient = np.matrix([
+            [-1, 1, 0],  # Right side of the camera
+            [0, 0, 1],   # Top of the camera
+            [-1, -1, 0]  # Optical axis
+        ])
+
+        intersections = get_cutoff_points(self.flat_square, cam_pos, cam_orient)
+        self.assertEqual(len(intersections), 2)
+        self.assertTrue(np.array_equal(intersections[0], np.array([-10, -9, 0])))
+        self.assertTrue(np.array_equal(intersections[1], np.array([-9, -10, 0])))
+
+    def test_cut_directly_in_corner(self):
+        """
+        Corner case (pun intended): Put camera in origin and point it directly at C3.
+        This will make the camera plane cut directly through C2 and C4.
+        """
+        # Position camera at origin
+        cam_pos = np.array([0, 0, 0])
+
+        # Yaw -45 degrees
+        cam_orient = np.matrix([
+            [1, -1, 0],  # Right side of the camera
+            [0, 0, 1],   # Top of the camera
+            [1, 1, 0]    # Optical axis
+        ])
+
+        intersections = get_cutoff_points(self.flat_square, cam_pos, cam_orient)
+        self.assertEqual(len(intersections), 2)
+        self.assertTrue(np.array_equal(intersections[0], np.array([-10, 10, 0])))
+        self.assertTrue(np.array_equal(intersections[1], np.array([10, -10, 0])))
+
+
+if __name__ == '__main__':
+    unittest.main()

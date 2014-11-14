@@ -140,13 +140,13 @@ textures['bru'] = expandTexture(buildTextureFromImage('../project.jpeg', [[1510,
 
 #building roof
 textures['roof'] = expandTexture(buildTextureFromImage('../project.jpeg', [[1261, 654], [1323, 655], [1327, 675], [1225, 675]]), 5)
-cv2.imwrite('roof.png', textures['roof'])
 
 #circular tower
 textures['tower'] = expandTexture(buildTextureFromImage('../project.jpeg', [[749, 669], [799, 669], [799, 733], [749, 733]]), 1)
 
 #far tower
-textures['ftower'] = expandTexture(buildTextureFromImage('../project.jpeg', [[863, 779], [865, 665], [941, 669], [947, 787]]), 1)
+textures['ftower'] = expandTexture(buildTextureFromImage('../project.jpeg', [[865, 665], [941, 669], [947, 787], [863, 779]]), 5)
+cv2.imwrite('ftower.jpg', textures['ftower'])
 
 # trees
 textures['trees'] = expandTexture(buildTextureFromImage('../project.jpeg', [[1, 327], [583, 633], [537, 863], [3, 901]]), 1)

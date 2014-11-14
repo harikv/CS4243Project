@@ -1,7 +1,7 @@
 import unittest
 
 import numpy as np
-from draw_picture import get_cutoff_points, get_corners_of_cut_texture, add_dummy_point
+from draw_picture import get_cutoff_points, get_corners_of_cut_texture, add_dummy_point, get_model_comparator
 
 
 class TestCutoffPointCalculation(unittest.TestCase):
@@ -206,6 +206,59 @@ class TestAddDummyPoint(unittest.TestCase):
         self.assertTrue(np.array_equal(corners, np.array([self.c2, [0, 10, 0], self.c3, self.c4])))
         self.assertTrue(np.array_equal(lines, [1, 1, 2, 3]))
         self.assertAlmostEqual(factors[1], 0.5)
+
+
+class TestModelDistanceComparator(unittest.TestCase):
+    def setUp(self):
+        # Define the orientation to be looking straight at (0, 0, 0)
+        self.straight_cam_orient = np.matrix([
+            [1, 0, 0],  # Right side of the camera
+            [0, 0, 1],  # Top of the camera
+            [0, 1, 0]   # Optical axis
+        ])
+
+        self.origin_cam_pos = np.array([0, 0, 0])
+        self.comparator = get_model_comparator(self.origin_cam_pos, self.straight_cam_orient)
+
+    def test_behind_each_other(self):
+        # Square directly in front of the camera 1 unit away
+        o1 = np.array([
+            [-1, 1, 1],
+            [1, 1, 1],
+            [1, 1, -1],
+            [-1, 1, -1],
+        ])
+
+        # Square directly in front of the camera 2 units away
+        o2 = np.array([
+            [-1, 2, 1],
+            [1, 2, 1],
+            [1, 2, -1],
+            [-1, 2, -1],
+        ])
+
+        self.assertLess(self.comparator(o1, o2), 0)
+        self.assertGreater(self.comparator(o2, o1), 0)
+        self.assertEqual(self.comparator(o1, o1), 0)
+
+    def test_side_by_side(self):
+        # Square directly in front of the camera 1 unit away
+        o1 = np.array([
+            [-1, 1, 1],
+            [1, 1, 1],
+            [1, 1, -1],
+            [-1, 1, -1],
+        ])
+
+        # o1 shifted along the x axis
+        o2 = np.array([
+            [2, 1, 1],
+            [4, 1, 1],
+            [4, 1, -1],
+            [2, 1, -1],
+        ])
+
+        self.assertLess(self.comparator(o1, o2), 0)
 
 
 if __name__ == '__main__':

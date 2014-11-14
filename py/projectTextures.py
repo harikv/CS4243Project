@@ -6,7 +6,7 @@ import math
 import os
 import csv
 from numpy import linalg as la
-from draw_picture import get_corners_of_cut_texture, get_cutoff_points, add_dummy_point
+from draw_picture import get_corners_of_cut_texture, get_cutoff_points, add_dummy_point, get_model_comparator
 
 
 def compare_floats(f1, f2):
@@ -195,90 +195,87 @@ def defineModel(model):
                (12.00, 0.00, -1.00),
                (10.00, 0.00, -1.00)]
     model.append({'set': corr_3d, 'pattern': 'staircase'})
-    for i in range(2):
-        offset = 1
-        if i == 1:
-            offset = -1
+    for offset in [1, -1]:
         for index in range(2):
-            corr_3d = [(10 * offset, -9.0, 10 - 5 * index),
-                       (10 * offset, -10, 10 - 5 * index),
-                       (10 * offset, -10, 5 - 5 * index),
-                       (10 * offset, -9.0, 5 - 5 * index)]
+            corr_3d = [(10 * offset, -9.0, 9 - 5 * index),
+                       (10 * offset, -10, 9 - 5 * index),
+                       (10 * offset, -10, 4 - 5 * index),
+                       (10 * offset, -9.0, 4 - 5 * index)]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(10 * offset, -8.0, 10 - 5 * index),
-                       (10 * offset, -9.0, 10 - 5 * index),
-                       (10 * offset, -9.0, 5 - 5 * index),
-                       (10 * offset, -8.0, 5 - 5 * index)]
+            corr_3d = [(10 * offset, -8.0, 9 - 5 * index),
+                       (10 * offset, -9.0, 9 - 5 * index),
+                       (10 * offset, -9.0, 4 - 5 * index),
+                       (10 * offset, -8.0, 4 - 5 * index)]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(10 * offset, -7.0, 10 - 5 * index),
-                       (10 * offset, -8.0, 10 - 5 * index),
-                       (10 * offset, -8.0, 5 - 5 * index),
-                       (10 * offset, -7.0, 5 - 5 * index)
+            corr_3d = [(10 * offset, -7.0, 9 - 5 * index),
+                       (10 * offset, -8.0, 9 - 5 * index),
+                       (10 * offset, -8.0, 4 - 5 * index),
+                       (10 * offset, -7.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(11 * offset, -7.0, 10 - 5 * index),
-                       (10 * offset, -7.0, 10 - 5 * index),
-                       (10 * offset, -7.0, 5 - 5 * index),
-                       (11 * offset, -7.0, 5 - 5 * index)
+            corr_3d = [(11 * offset, -7.0, 9 - 5 * index),
+                       (10 * offset, -7.0, 9 - 5 * index),
+                       (10 * offset, -7.0, 4 - 5 * index),
+                       (11 * offset, -7.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(12 * offset, -7.0, 10 - 5 * index),
-                       (11 * offset, -7.0, 10 - 5 * index),
-                       (11 * offset, -7.0, 5 - 5 * index),
-                       (12 * offset, -7.0, 5 - 5 * index)
+            corr_3d = [(12 * offset, -7.0, 9 - 5 * index),
+                       (11 * offset, -7.0, 9 - 5 * index),
+                       (11 * offset, -7.0, 4 - 5 * index),
+                       (12 * offset, -7.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(12 * offset, -6.0, 10 - 5 * index),
-                       (12 * offset, -7.0, 10 - 5 * index),
-                       (12 * offset, -7.0, 5 - 5 * index),
-                       (12 * offset, -6.0, 5 - 5 * index)
+            corr_3d = [(12 * offset, -6.0, 9 - 5 * index),
+                       (12 * offset, -7.0, 9 - 5 * index),
+                       (12 * offset, -7.0, 4 - 5 * index),
+                       (12 * offset, -6.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(12 * offset, -5.0, 10 - 5 * index),
-                       (12 * offset, -6.0, 10 - 5 * index),
-                       (12 * offset, -6.0, 5 - 5 * index),
-                       (12 * offset, -5.0, 5 - 5 * index)
+            corr_3d = [(12 * offset, -5.0, 9 - 5 * index),
+                       (12 * offset, -6.0, 9 - 5 * index),
+                       (12 * offset, -6.0, 4 - 5 * index),
+                       (12 * offset, -5.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(12 * offset, -4.0, 10 - 5 * index),
-                       (12 * offset, -5.0, 10 - 5 * index),
-                       (12 * offset, -5.0, 5 - 5 * index),
-                       (12 * offset, -4.0, 5 - 5 * index)
+            corr_3d = [(12 * offset, -4.0, 9 - 5 * index),
+                       (12 * offset, -5.0, 9 - 5 * index),
+                       (12 * offset, -5.0, 4 - 5 * index),
+                       (12 * offset, -4.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(11 * offset, -4.0, 10 - 5 * index),
-                       (12 * offset, -4.0, 10 - 5 * index),
-                       (12 * offset, -4.0, 5 - 5 * index),
-                       (11 * offset, -4.0, 5 - 5 * index)
+            corr_3d = [(11 * offset, -4.0, 9 - 5 * index),
+                       (12 * offset, -4.0, 9 - 5 * index),
+                       (12 * offset, -4.0, 4 - 5 * index),
+                       (11 * offset, -4.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(10 * offset, -4.0, 10 - 5 * index),
-                       (11 * offset, -4.0, 10 - 5 * index),
-                       (11 * offset, -4.0, 5 - 5 * index),
-                       (10 * offset, -4.0, 5 - 5 * index)
+            corr_3d = [(10 * offset, -4.0, 9 - 5 * index),
+                       (11 * offset, -4.0, 9 - 5 * index),
+                       (11 * offset, -4.0, 4 - 5 * index),
+                       (10 * offset, -4.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(10 * offset, -3.0, 10 - 5 * index),
-                       (10 * offset, -4.0, 10 - 5 * index),
-                       (10 * offset, -4.0, 5 - 5 * index),
-                       (10 * offset, -3.0, 5 - 5 * index)
+            corr_3d = [(10 * offset, -3.0, 9 - 5 * index),
+                       (10 * offset, -4.0, 9 - 5 * index),
+                       (10 * offset, -4.0, 4 - 5 * index),
+                       (10 * offset, -3.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(10 * offset, -2.0, 10 - 5 * index),
-                       (10 * offset, -3.0, 10 - 5 * index),
-                       (10 * offset, -3.0, 5 - 5 * index),
-                       (10 * offset, -2.0, 5 - 5 * index)
+            corr_3d = [(10 * offset, -2.0, 9 - 5 * index),
+                       (10 * offset, -3.0, 9 - 5 * index),
+                       (10 * offset, -3.0, 4 - 5 * index),
+                       (10 * offset, -2.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
@@ -372,9 +369,14 @@ def projectModelPoints(camera_position, camera_orientation, model, textures):
     # camera_orientation = np.matrix([[0.00, 0.00, 1.00], [1.00, 0.00, 0.00], [0.00, 1.00, 0.00]])
     modelsProjected = []
     allProjectedPoints = []
-    for i in range(len(model)):
-        single3dSet = model[i]['set']
-        singleTexture = np.array(textures[model[i]['pattern']])
+
+    # Sort model so we draw the furthest away polygons first
+    comparator = get_model_comparator(camera_position, camera_orientation)
+    sorted_model = sorted(model, cmp=comparator, key=lambda p: np.array(p['set']), reverse=True)
+
+    for i in range(len(sorted_model)):
+        single3dSet = sorted_model[i]['set']
+        singleTexture = np.array(textures[sorted_model[i]['pattern']])
         projectedPoints = []
 
         # cutoff model by camera plane - new points

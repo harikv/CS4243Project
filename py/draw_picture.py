@@ -96,7 +96,27 @@ def get_optical_axis(cam_orient):
 
 
 def get_model_comparator(cam_pos, cam_orient):
+    """
+    Returns a comparison function that takes two 3D polygons and returns a number
+    less than zero if the first parameter is closer to the camera and a number greater
+    than zero if the second parameter is the closest.
+    It is determined by projecting the middle of the object onto the optical axis and
+    determining which projection is the longest. If they are equally long, the Euclidian
+    distance between the camera and the center points are compared.
+    If the objects are equally far away, zero is returned.
+    :param cam_pos: the position of the camera
+    :param cam_orient: camera orientation
+    :return: object comparator function
+    """
     def comp(o1, o2):
+        """
+        Compare two objects according to the description above.
+        :param o1: first polygon
+        :param o2: second polygon
+        :return: -x when o1 is closer than o2 to the camera, x when o1 is further away
+                 than o2, zero if they are equally far away.
+        """
+        # Find center of polygons
         o1_center = sum(o1) / float(len(o1))
         o2_center = sum(o2) / float(len(o2))
 
@@ -107,15 +127,17 @@ def get_model_comparator(cam_pos, cam_orient):
         vec_to_o1 = o1_center - cam_pos
         vec_to_o2 = o2_center - cam_pos
 
+        # Project points onto the optical axis
         proj_dist_to_o1 = length((dotproduct(vec_to_o1, optical_axis) / oa_dot_oa) * optical_axis)
         proj_dist_to_o2 = length((dotproduct(vec_to_o2, optical_axis) / oa_dot_oa) * optical_axis)
 
+        # Compare projected distances
         if proj_dist_to_o1 != proj_dist_to_o2:
             return proj_dist_to_o1 - proj_dist_to_o2
 
+        # Compare euclidian distances
         dist_to_o1 = length(o1_center - cam_pos)
         dist_to_o2 = length(o2_center - cam_pos)
-
         return dist_to_o1 - dist_to_o2
 
     return comp

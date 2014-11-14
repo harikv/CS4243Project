@@ -140,7 +140,7 @@ def get_model_comparator(cam_pos, cam_orient):
 def get_view_limit_planes(cam_orient):
     # TODO aspect ratio is fixed to 1:1
     cam_orient = np.matrix(np.identity(3))
-    viewing_angle = 65.0
+    viewing_angle = 80.0
 
     def rotate_camera(rotation_axis, degrees):
         rotation_matrix = projection.quat2rot(projection.rotation_quaternion(rotation_axis, degrees))

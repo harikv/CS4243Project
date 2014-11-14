@@ -452,7 +452,7 @@ def projectModelPoints(camera_position, camera_orientation, model, textures):
     :return: a fully formed image
     """
     global out_img
-    viewport = (600, 800)
+    viewport = (300, 400)
     viewing_angle_in_radians = degtorad(90)
     out_img = createNullImage(viewport)
     modelsProjected = []

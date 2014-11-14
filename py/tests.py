@@ -1,7 +1,7 @@
 import unittest
 
 import numpy as np
-from draw_picture import get_cutoff_points, get_corners_of_cut_texture, add_dummy_point, get_model_comparator, get_view_limit_planes
+from draw_picture import get_cutoff_points, get_corners_of_cut_texture, add_dummy_point, get_model_comparator, get_view_limit_planes, cut_polygon_new
 
 
 class TestCutoffPointCalculation(unittest.TestCase):
@@ -275,8 +275,37 @@ class TestRestrictViewAngle(unittest.TestCase):
         ])
 
     def test_calculate_view_restricting_planes(self):
-        planes = get_view_limit_planes(self.straight_cam_orient)
         # TODO test this shit, too tired :(
+        # get_view_limit_planes(self.straight_cam_orient)
+        print get_view_limit_planes(np.matrix(np.identity(3)))
+
+
+class TestNewPolygonCuttion(unittest.TestCase):
+    def setUp(self):
+        self.straight_cam_orient = np.matrix([
+            [1, 0, 0],  # Right side of the camera
+            [0, 0, 1],  # Top of the camera
+            [0, 1, 0]   # Optical axis
+        ])
+        self.origin_cam_pos = np.array([0, 0, 0])
+
+    def test_all_pointsInside(self):
+        model = np.array([
+            [-0.5, 10, 0.5],
+            [0.5, 10, 0.5],
+            [0.5, 10, -0.5],
+            [-0.5, 10, -0.5]
+        ])
+
+        texture = np.array([
+            [0, 0],
+            [0, 10],
+            [10, 10],
+            [10, 0]
+        ])
+
+        cut_model, cut_texture = cut_polygon_new(model, texture, self.origin_cam_pos, self.straight_cam_orient)
+        print cut_model
 
 
 if __name__ == '__main__':

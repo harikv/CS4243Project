@@ -36,11 +36,7 @@ def get_cutoff_points(points, cam_pos, cam_orient, cut_plane):
         # If the current point are in front of the camera and the next is behind the line is cut
         if point_outside_view[i] is not point_outside_view[next_i]:
             # Calculate where the line between the points intersects with the camera plane
-            line_direction = points[next_i] - points[i]
-            nominator = dotproduct(cam_pos - points[i], cam_orient[2].getA1())
-            denominator = dotproduct(line_direction, cam_orient[2].getA1())
-            factor = float(nominator) / denominator
-            intersection = (factor * line_direction + points[i])
+            intersection, factor = line_intersects_plane(points[i], points[next_i], cam_pos, cut_plane)
 
             # If the factor is 0 or 1, the camera plane cuts directly through an existing corner.
             # This will be added in the next iteration, so don't add it here.
@@ -143,21 +139,22 @@ def get_model_comparator(cam_pos, cam_orient):
 
 def get_view_limit_planes(cam_orient):
     # TODO aspect ratio is fixed to 1:1
-    viewing_angle = 60.0
+    cam_orient = np.matrix(np.identity(3))
+    viewing_angle = 65.0
 
     def rotate_camera(rotation_axis, degrees):
         rotation_matrix = projection.quat2rot(projection.rotation_quaternion(rotation_axis, degrees))
         return rotation_matrix * cam_orient
 
     return [
-        rotate_camera(cam_orient[0].getA1(), viewing_angle / 2)[1].getA1(),
-        rotate_camera(cam_orient[0].getA1(), -viewing_angle / 2)[1].getA1() * -1,  # Make it point away from the image
-        rotate_camera(cam_orient[1].getA1(), viewing_angle / 2)[0].getA1(),
-        rotate_camera(cam_orient[1].getA1(), -viewing_angle / 2)[0].getA1() * -1   # Make it point away from the image
+        rotate_camera(cam_orient[0].getA1(), -viewing_angle)[2].getA1(),       # UP
+        rotate_camera(cam_orient[0].getA1(), viewing_angle)[2].getA1() * -1,   # DOWN
+        rotate_camera(cam_orient[2].getA1(), viewing_angle)[0].getA1(),        # RIGHT
+        rotate_camera(cam_orient[2].getA1(), -viewing_angle)[0].getA1() * -1   # LEFT
     ]
 
 
-def line_intesects_plane(ia, ib, p0, n):
+def line_intersects_plane(ia, ib, p0, n):
     """
     Calculate the intersection between a line and a plane
     :param ia: a point on the line
@@ -171,7 +168,6 @@ def line_intesects_plane(ia, ib, p0, n):
     line_direction = ib - ia
     nominator = dotproduct(p0 - ia, n)
     denominator = dotproduct(line_direction, n)
-    # If 0 < d < 1 the plane cuts the line between the two points
     d = float(nominator) / denominator
     return d * line_direction + ia, d
 
@@ -186,54 +182,9 @@ def project_point_on_vector(p, v):
     return dotproduct(p, v) / float(dotproduct(v, v))
 
 
-def cut_polygon_new(points, cam_pos, cam_orient):
+def cut_polygon_new(model_points, texture_points, cam_pos, cam_orient):
     for plane in get_view_limit_planes(cam_orient):
-        points = get_cutoff_points(points, cam_pos, cam_pos, plane)
-    return points
-
-
-#     # Step 1: cut away the part of the polygon that is above the top plane
-#     # Step 2: cut away the part of the polygon that is below the bottom plane
-#     # Step 3: cut away the part of the polygon that is right of the right plane
-#     # Step 4: cut away the part of the polygon that is left of the left plane
-#
-#     planes = get_view_limit_planes(cam_orient)
-#
-#     # find out which points are inside the image by projecting onto the normal
-#     # vector. If the factor is negative, the point is on the "right" side
-#     # of the plane, i.e. inside the image
-#     point_inside = [project_point_on_vector(p, planes[0]) < 0 for p in points]
-#     new_corners = []
-#     for i in range(len(points)):
-#         next_i = (i + 1) % len(points)
-#
-#         p0 = points[i]
-#         p1 = points[next_i]
-#
-#         if point_inside[i]:
-#             new_corners.append(points[i])
-#
-#         # If the current point are in front of the camera and the next is behind the line is cut
-#         if point_inside[i] is not point_inside[next_i]:
-#             # Calculate where the line between the points intersects with the camera plane
-#             intersection, d = line_intesects_plane(p0, p1, cam_pos, planes[0])
-#
-#             # If the factor is 0 or 1, the camera plane cuts directly through an existing corner.
-#             # This will be added in the next iteration, so don't add it here.
-#             if 0 < d < 1:
-#                 new_corners.append(intersection)
-#                 line_segments.append(i)
-#                 factors.append(factor)
-#
-#
-#
-#
-#
-#         intersection, d = line_intesects_plane(p0, p1, cam_pos, planes[0])
-#         if 0 < d < 1:
-#             # The line is cut
-#             # TODO insert new point
-#             pass
-#
-#
-#     pass
+        model_points, lines, factors = get_cutoff_points(model_points, cam_pos, cam_orient, plane)
+        texture_points = get_corners_of_cut_texture(texture_points, lines, factors)
+    # TODO Add points if there are less than four
+    return model_points, texture_points

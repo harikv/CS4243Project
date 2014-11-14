@@ -6,7 +6,7 @@ import math
 import os
 import csv
 from numpy import linalg as la
-from draw_picture import get_corners_of_cut_texture, get_cutoff_points, add_dummy_point, get_model_comparator
+from draw_picture import get_model_comparator, cut_polygon_new
 
 
 def compare_floats(f1, f2):
@@ -380,15 +380,16 @@ def projectModelPoints(camera_position, camera_orientation, model, textures):
         projectedPoints = []
 
         # cutoff model by camera plane - new points
-        temp_points, lines, factors = get_cutoff_points(np.asarray(single3dSet), camera_position, camera_orientation)
-        if (len(temp_points) == 0):
-            continue
-        elif len(temp_points) < 4:
-            temp_points, lines, factors = add_dummy_point(temp_points, lines, factors)
+        # temp_points, lines, factors = get_cutoff_points(np.asarray(single3dSet), camera_position, camera_orientation)
         texture_container = np.array([[0, 0], [0, singleTexture.shape[1] - 1],
                                       [singleTexture.shape[0] - 1, singleTexture.shape[1] - 1],
                                       [singleTexture.shape[0] - 1, 0]])
-        temp_texture = get_corners_of_cut_texture(texture_container, lines, factors)
+        temp_points, temp_texture = cut_polygon_new(np.asarray(single3dSet), texture_container, camera_position, camera_orientation)
+        if (len(temp_points) == 0):
+            continue
+        # elif len(temp_points) < 4:
+        #     temp_points, lines, factors = add_dummy_point(temp_points, lines, factors)
+        # temp_texture = get_corners_of_cut_texture(texture_container, lines, factors)
         # new texture
         # singleTexture = switchOffPixelsInArray(singleTexture, temp_texture)
         for point in temp_points:

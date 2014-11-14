@@ -331,7 +331,6 @@ def mapTexture(texture_image, input_points, output_points, output_img):
             corr_input_matrix = inverse_transform * output_matrix
             corr_x = int(corr_input_matrix[0] / corr_input_matrix[2])
             corr_y = int(corr_input_matrix[1] / corr_input_matrix[2])
-            # print texture_image.shape, corr_x, corr_y
             output_img[-point[1]][point[0]] = texture_image[corr_x][corr_y]
     return output_img
 

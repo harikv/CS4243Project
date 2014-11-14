@@ -73,30 +73,14 @@ def processPolygon(polygon, rows, columns, mode):
 
 def buildTextureFromImage(imgURL, pts, mode):
     img = cv2.imread(imgURL, cv2.CV_LOAD_IMAGE_COLOR)
-    if (len(img) == 0):
+    if(len(img) == 0):
         return
-    rows = img.shape[0]
-    columns = img.shape[1]
-    pointsInImage = processPolygon(pts, rows, columns, mode)
-    del pts[-1]
-    minimumDivisionsInRow = min([len(pointsInImage[x]) for x in range(len(pointsInImage))])
-    output_boundaries = []
-    output_width = 0
-    output_height = 0
-    if (mode == 'H'):
-        output_boundaries = [[0, 0], [0, len(pointsInImage) - 1], [minimumDivisionsInRow - 1, len(pointsInImage) - 1],
-                             [minimumDivisionsInRow - 1, 0]]
-        output_width = len(pointsInImage)
-        output_height = minimumDivisionsInRow
-    else:
-        output_boundaries = [[0, 0], [0, minimumDivisionsInRow - 1],
-                             [len(pointsInImage) - 1, minimumDivisionsInRow - 1], [len(pointsInImage) - 1, 0]]
-        output_width = minimumDivisionsInRow
-        output_height = len(pointsInImage)
-    transform_matrix = cv2.getPerspectiveTransform(np.asarray(pts, dtype='float32'),
-                                                   np.asarray(output_boundaries, dtype='float32'))
+    output_width = max([pts[1][0] - pts[0][0], pts[2][0] - pts[3][0]])
+    output_height = max([pts[3][1] - pts[0][1], pts[2][1] - pts[1][1]])
+    output_boundaries = [[0,0], [0, output_width], [output_height, output_width], [output_height, 0]]
+    transform_matrix = cv2.getPerspectiveTransform(np.asarray(pts, dtype='float32'), np.asarray(output_boundaries, dtype='float32'))
     output_pattern = cv2.warpPerspective(img, transform_matrix, (output_height, output_width))
-    return np.transpose(output_pattern, [1, 0, 2])
+    return np.transpose(output_pattern, [1,0,2])
 
 
 def buildSolidTexture(width, height, colour_code):
@@ -122,7 +106,7 @@ textures['sky5'] = buildTextureFromImage('../sky.jpg', [(600, 200), (800, 200), 
 textures['ground'] = buildSolidTexture(600, 600, (179, 222, 245))
 
 #lawn
-textures['lawn'] = buildTextureFromImage('../project.jpeg', [[530, 876], [1184, 876], [1184, 1224], [530, 1224]], "V")
+textures['lawn'] = buildTextureFromImage('../project.jpeg', [[551, 867], [965, 872], [1636, 1224], [0, 1224]], "V")
 
 # # building-right-unit
 textures['bru'] = buildTextureFromImage('../project.jpeg', [[1510, 593], [1572, 568], [1572, 722], [1510, 730]], "H")

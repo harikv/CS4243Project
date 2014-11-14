@@ -188,8 +188,8 @@ def defineModel(model):
     #trees in the background
     corr_3d = [(-12.00, -10.00, 6.00),
                (12.00, -10.00, 6.00),
-               (12.00, -10.00, 0.00),
-               (-12.00, -10.00, 0.00)]
+               (12.00, -10.00, -1.00),
+               (-12.00, -10.00, -1.00)]
     model.append({'set': corr_3d, 'pattern': 'trees'})
 
     #tower on the church
@@ -452,7 +452,7 @@ def projectModelPoints(camera_position, camera_orientation, model, textures):
     :return: a fully formed image
     """
     global out_img
-    viewport = (300, 400)
+    viewport = (600, 800)
     viewing_angle_in_radians = degtorad(90)
     out_img = createNullImage(viewport)
     modelsProjected = []

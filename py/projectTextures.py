@@ -6,7 +6,7 @@ import math
 import os
 import csv
 from numpy import linalg as la
-from draw_picture import get_corners_of_cut_texture, get_cutoff_points, add_dummy_point
+from draw_picture import get_corners_of_cut_texture, get_cutoff_points, add_dummy_point, get_model_comparator
 
 
 def compare_floats(f1, f2):
@@ -364,9 +364,14 @@ def projectModelPoints():
     camera_orientation = np.matrix([[0.00, 0.00, 1.00], [1.00, 0.00, 0.00], [0.00, 1.00, 0.00]])
     modelsProjected = []
     allProjectedPoints = []
-    for i in range(len(model)):
-        single3dSet = model[i]['set']
-        singleTexture = np.array(textures[model[i]['pattern']])
+
+    # Sort model so we draw the furthest away polygons first
+    comparator = get_model_comparator(camera_position, camera_orientation)
+    sorted_model = sorted(model, cmp=comparator, key=lambda p: np.array(p['set']), reverse=True)
+
+    for i in range(len(sorted_model)):
+        single3dSet = sorted_model[i]['set']
+        singleTexture = np.array(textures[sorted_model[i]['pattern']])
         projectedPoints = []
 
         # cutoff model by camera plane - new points

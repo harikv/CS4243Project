@@ -13,7 +13,7 @@ def length(v):
 
 
 def angle(v1, v2):
-    if (length(v1) * length(v2) == 0):
+    if length(v1) * length(v2) == 0:
         return 0
     return math.acos(dotproduct(v1, v2) / (length(v1) * length(v2)))
 
@@ -99,7 +99,7 @@ def checkPointBehind(point, camera_position, optical_axis, viewing_angle):
 
 def perspective_proj(point, camera_position, camera_axes, viewing_angle):
     point_camera_frame = np.matrix(point - camera_position)
-    if (not checkPointBehind(point, camera_position, camera_axes[2], viewing_angle)):
+    if not checkPointBehind(point, camera_position, camera_axes[2], viewing_angle):
         return None
     camera_x_axis = np.matrix(camera_axes[0]).transpose()
     camera_y_axis = np.matrix(camera_axes[1]).transpose()
@@ -116,60 +116,4 @@ def perspective_proj(point, camera_position, camera_axes, viewing_angle):
 
 
 def return_projected_point(point, cam_pos, viewing_angle, camera_orientation):
-    op = []
-    pp = None
-    # op.append(orthographic_proj(pt, cam_pos, camera_orientation))
-    pt = perspective_proj(point, cam_pos, camera_orientation, viewing_angle)
-    if (pt):
-        pp = pt
-
-    return pp
-
-
-def project(points, cam_pos, viewing_angle):
-    print max([a[0] for a in points])
-    print min([a[0] for a in points])
-    print max([a[1] for a in points])
-    print min([a[1] for a in points])
-    print max([a[2] for a in points])
-    print min([a[2] for a in points])
-    # TODO i think i mixed up x and y coordinates in the vectors
-    camera_orientation = np.matrix([[1, 0, 0], [0, 0, 1], [0, 1, 0]])
-    # camera_orientation = quat2rot(rotation_quaternion([1, 0, 0], 90)) * np.matrix(np.identity(3))
-    # camera_orientation = quat2rot(rotation_quaternion([0, 1, 0], 180)) * np.matrix(camera_orientation)
-
-    op_figure = plt.figure(1)
-    pp_figure = plt.figure(2)
-
-    op = []
-    pp = []
-    x_pp = []
-    y_pp = []
-    for pt in np.array(points):
-        op.append(orthographic_proj(pt, cam_pos, camera_orientation))
-        pt = perspective_proj(pt, cam_pos, camera_orientation, viewing_angle)
-        if (pt):
-            pp.append(pt)
-            x_pp.append((pt[0]))
-            y_pp.append((pt[1]))
-    max_x = max(x_pp)
-    min_x = min(x_pp)
-    max_y = max(y_pp)
-    min_y = min(y_pp)
-    print max_x, min_x, max_y, min_y
-    plt.axis((0, 200, 0, 150))
-
-    plt.figure(1)
-    plt.subplot(1, 1, 1)
-    plt.margins(0.1, 0.1)
-    plt.plot([((x[0] + 60) / 119) * 1632 for x in op], [((y[1] + 27) / 27.075) * 1224 for y in op], 'bo', markersize=2)
-
-    plt.figure(2)
-    plt.subplot(1, 1, 1)
-    plt.margins(0.1, 0.1)
-    plt.plot([((x[0] + 60) / 119) * 200 for x in pp], [((y[1] + 27) / 77) * 150 for y in pp], 'bo', markersize=2)
-
-    op_figure.suptitle("Orthographic Projection")
-    op_figure.savefig('op.png')
-    pp_figure.suptitle("Perspective Projection")
-    pp_figure.savefig('pp.png')
+    return perspective_proj(point, cam_pos, camera_orientation, viewing_angle)

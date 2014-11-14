@@ -2,7 +2,7 @@
 *.png
 *.jpeg
 .DS_Store
-
+*.csv
 .idea
 *.pyc
 venv

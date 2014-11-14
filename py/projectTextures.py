@@ -10,274 +10,270 @@ from draw_picture import get_corners_of_cut_texture, get_cutoff_points, add_dumm
 
 
 def compare_floats(f1, f2):
-    return abs(f1 - f2) <= 0.00001
+	return abs(f1 - f2) <= 0.00001
 
 
 def compare_color(color1, color2):
-    if (compare_floats(color1[0], color2[0]) and compare_floats(color1[1], color2[1]) and compare_floats(color1[2],
-                                                                                                         color2[2])):
-        return True
-    return False
+	if (compare_floats(color1[0], color2[0]) and compare_floats(color1[1], color2[1]) and compare_floats(color1[2],
+																										 color2[2])):
+		return True
+	return False
 
 
 def replace_null_img(img):
-    num_rows = img.shape[0]
-    num_cols = img.shape[1]
-    null_color = np.array([256.00, 256.00, 256.00])
-    for row in range(num_rows):
-        for column in range(num_cols):
-            if (compare_color(img[row][column], null_color)):
-                img[row][column] = np.array([0.00, 0.00, 0.00])
-    return img
+	num_rows = img.shape[0]
+	num_cols = img.shape[1]
+	null_color = np.array([256.00, 256.00, 256.00])
+	for row in range(num_rows):
+		for column in range(num_cols):
+			if (compare_color(img[row][column], null_color)):
+				img[row][column] = np.array([0.00, 0.00, 0.00])
+	return img
 
 
 def carryOutDithering(iteration, img):
-    num_rows = img.shape[0]
-    num_cols = img.shape[1]
-    null_color = np.array([256.00, 256.00, 256.00])
-    for index in range(iteration):
-        print "Dithering Revision: ", (index + 1)
-        for row in range(num_rows):
-            for column in range(num_cols):
-                avg = np.array([0.00, 0.00, 0.00])
-                count = 0
-                countNull = 0
-                if (compare_color(img[row][column], null_color)):
-                    if (row > 0 and column > 0):
-                        # print img[row-1][column-1]
-                        count += 1
-                        if (not compare_color(img[row - 1][column - 1], null_color)):
-                            avg += img[row - 1][column - 1]
-                        else:
-                            countNull += 1
-                    if (row > 0):
-                        # print img[row-1][column]
-                        count += 1
-                        if (not compare_color(img[row - 1][column], null_color)):
-                            avg += img[row - 1][column]
-                        else:
-                            countNull += 1
-                    if (row > 0 and column < num_cols - 1):
-                        # print img[row-1][column+1]
-                        count += 1
-                        if (not compare_color(img[row - 1][column + 1], null_color)):
-                            avg += img[row - 1][column + 1]
-                        else:
-                            countNull += 1
-                    if (column > 0):
-                        count += 1
-                        if (not compare_color(img[row][column - 1], null_color)):
-                            avg += img[row][column - 1]
-                        else:
-                            countNull += 1
-                    if (column > 0 and row < num_rows - 1):
-                        count += 1
-                        if (not compare_color(img[row + 1][column - 1], null_color)):
-                            avg += img[row + 1][column - 1]
-                        else:
-                            countNull += 1
-                    if (row < num_rows - 1):
-                        count += 1
-                        if (not compare_color(img[row + 1][column], null_color)):
-                            avg += img[row + 1][column]
-                        else:
-                            countNull += 1
-                    if (column < num_cols - 1 and row < num_rows - 1):
-                        count += 1
-                        if (not compare_color(img[row + 1][column + 1], null_color)):
-                            avg += img[row + 1][column + 1]
-                        else:
-                            countNull += 1
-                    if (column < num_cols - 1):
-                        count += 1
-                        if (not compare_color(img[row][column + 1], null_color)):
-                            avg += img[row][column + 1]
-                        else:
-                            countNull += 1
-                    avg = avg / (count - (0.5 * countNull))
-                    if (count != countNull):
-                        img[row][column] = avg
-    return replace_null_img(img)
-
+	num_rows = img.shape[0]
+	num_cols = img.shape[1]
+	null_color = np.array([256.00, 256.00, 256.00])
+	for index in range(iteration):
+		print "Dithering Revision: ", (index + 1)
+		for row in range(num_rows):
+			for column in range(num_cols):
+				avg = np.array([0.00, 0.00, 0.00])
+				count = 0
+				countNull = 0
+				if (compare_color(img[row][column], null_color)):
+					if (row > 0 and column > 0):
+						# print img[row-1][column-1]
+						count += 1
+						if (not compare_color(img[row - 1][column - 1], null_color)):
+							avg += img[row - 1][column - 1]
+						else:
+							countNull += 1
+					if (row > 0):
+						# print img[row-1][column]
+						count += 1
+						if (not compare_color(img[row - 1][column], null_color)):
+							avg += img[row - 1][column]
+						else:
+							countNull += 1
+					if (row > 0 and column < num_cols - 1):
+						# print img[row-1][column+1]
+						count += 1
+						if (not compare_color(img[row - 1][column + 1], null_color)):
+							avg += img[row - 1][column + 1]
+						else:
+							countNull += 1
+					if (column > 0):
+						count += 1
+						if (not compare_color(img[row][column - 1], null_color)):
+							avg += img[row][column - 1]
+						else:
+							countNull += 1
+					if (column > 0 and row < num_rows - 1):
+						count += 1
+						if (not compare_color(img[row + 1][column - 1], null_color)):
+							avg += img[row + 1][column - 1]
+						else:
+							countNull += 1
+					if (row < num_rows - 1):
+						count += 1
+						if (not compare_color(img[row + 1][column], null_color)):
+							avg += img[row + 1][column]
+						else:
+							countNull += 1
+					if (column < num_cols - 1 and row < num_rows - 1):
+						count += 1
+						if (not compare_color(img[row + 1][column + 1], null_color)):
+							avg += img[row + 1][column + 1]
+						else:
+							countNull += 1
+					if (column < num_cols - 1):
+						count += 1
+						if (not compare_color(img[row][column + 1], null_color)):
+							avg += img[row][column + 1]
+						else:
+							countNull += 1
+					avg = avg / (count - (0.5 * countNull))
+					if (count != countNull):
+						img[row][column] = avg
+	return replace_null_img(img)
 
 def populate_texture_list(fileName):
-    with open(fileName, 'rb') as csvfile:
-        reader = csv.reader(csvfile, delimiter=',', quotechar='|')
-        info_row = next(reader)
-        no_of_textures = int(info_row[0])
-        for i in range(no_of_textures):
-            texture_info = next(reader)
-            height_texture = int(texture_info[2])
-            width_texture = texture_info[1]
-            texture_array = []
-            for row in range(height_texture):
-                texture_array.append([])
-                next_row = next(reader)
-                int_next_row = [eval(x) for x in next_row]
-                texture_array[row] = int_next_row
-            textures[texture_info[0]] = texture_array
+	with open(fileName, 'rb') as csvfile:
+		reader = csv.reader(csvfile, delimiter=',', quotechar='|')
+		info_row = next(reader)
+		no_of_textures = int(info_row[0])
+		for i in range(no_of_textures):
+			texture_info = next(reader)
+			height_texture = int(texture_info[2])
+			width_texture = texture_info[1]
+			texture_array = []
+			for row in range(height_texture):
+				texture_array.append([])
+				next_row = next(reader)
+				int_next_row = [eval(x) for x in next_row]
+				texture_array[row] = int_next_row
+			textures[texture_info[0]] = texture_array
 
 
 def createNullImage(shape):
-    newImage = []
-    null_color = np.array([256.00, 256.00, 256.00])
-    for row in range(shape[0]):
-        newImage.append([])
-        for column in range(shape[1]):
-            newImage[row].append(null_color)
-    return np.asarray(newImage)
+	newImage = []
+	null_color = np.array([256.00, 256.00, 256.00])
+	for row in range(shape[0]):
+		newImage.append([])
+		for column in range(shape[1]):
+			newImage[row].append(null_color)
+	return np.asarray(newImage)
 
 
 def defineModel():
-    # corr_3d = [(-20.00,20.00,-1.00),
-    # (20.00,20.00,-1.00),
-    # (20.00,20.00,19.00),
-    # (-20.00,20.00,19.00)]
-    # model.append({'set': corr_3d, 'pattern': 'sky1'})
+	# corr_3d = [(-20.00,20.00,-1.00),
+	# (20.00,20.00,-1.00),
+	# (20.00,20.00,19.00),
+	#        (-20.00,20.00,19.00)]
+	# model.append({'set': corr_3d, 'pattern': 'sky1'})
 
-    # corr_3d = [(-20.00,20.00,19.00),
-    #        (20.00,20.00,19.00),
-    #        (20.00,-20.00,19.00),
-    #        (-20.00,-20.00,19.00)]
-    # model.append({'set': corr_3d, 'pattern': 'sky_main'})
+	# corr_3d = [(-20.00,20.00,19.00),
+	#        (20.00,20.00,19.00),
+	#        (20.00,-20.00,19.00),
+	#        (-20.00,-20.00,19.00)]
+	# model.append({'set': corr_3d, 'pattern': 'sky_main'})
 
-    # corr_3d = [(-20.00,-20.00,19.00),
-    #        (20.00,-20.00,19.00),
-    #        (20.00,-20.00,-1.00),
-    #        (-20.00,-20.00,-1.00)]
-    # model.append({'set': corr_3d, 'pattern': 'sky3'})
+	# corr_3d = [(-20.00,-20.00,19.00),
+	#        (20.00,-20.00,19.00),
+	#        (20.00,-20.00,-1.00),
+	#        (-20.00,-20.00,-1.00)]
+	# model.append({'set': corr_3d, 'pattern': 'sky3'})
 
-    # corr_3d = [(-20.00,20.00,-1.00),
-    #        (-20.00,20.00,19.00),
-    #        (20.00,-20.00,19.00),
-    #        (20.00,-20.00,-1.00)]
-    # model.append({'set': corr_3d, 'pattern': 'sky3'})
+	# corr_3d = [(-20.00,20.00,-1.00),
+	#        (-20.00,20.00,19.00),
+	#        (20.00,-20.00,19.00),
+	#        (20.00,-20.00,-1.00)]
+	# model.append({'set': corr_3d, 'pattern': 'sky3'})
 
-    # corr_3d = [(20.00,20.00,19.00),
-    #        (20.00,20.00,-1.00),
-    #        (20.00,-20.00,-1.00),
-    #        (20.00,-20.00,19.00)]
-    # model.append({'set': corr_3d, 'pattern': 'sky4'})
+	# corr_3d = [(20.00,20.00,19.00),
+	#        (20.00,20.00,-1.00),
+	#        (20.00,-20.00,-1.00),
+	#        (20.00,-20.00,19.00)]
+	# model.append({'set': corr_3d, 'pattern': 'sky4'})
 
-    # corr_3d = [(-20.00, 20.00, -1.00),
-    #            (20.00,20.00,-1.00),
-    #            (20.00,-10.00,-1.00),
-    #            (-20.00,-10.00,-1.00)]
-    # model.append({'set': corr_3d, 'pattern': 'ground'})
+	# corr_3d = [(-20.00, 20.00, -1.00),
+	#            (20.00,20.00,-1.00),
+	#            (20.00,-10.00,-1.00),
+	#            (-20.00,-10.00,-1.00)]
+	# model.append({'set': corr_3d, 'pattern': 'ground'})
 
-    corr_3d = [(-3.00, 0.00, 5.00),
-               (3.00, 0.00, 5.00),
-               (3.00, 0.00, -1.00),
-               (-3.00, 0.00, -1.000)]
-    model.append({'set': corr_3d, 'pattern': 'front'})
+	corr_3d = [(-3.00, 0.00, 5.00),
+			   (3.00, 0.00, 5.00),
+			   (3.00, 0.00, -1.00),
+			   (-3.00, 0.00, -1.000)]
+	model.append({'set': corr_3d, 'pattern': 'front'})
 
-    corr_3d = [(-10.00, 0.00, -1.00),
-               (10.00, 0.00, -1.00),
-               (10.00, -10.00, -1.00),
-               (-10.00, -10.00, -1.00)]
-    model.append({'set': corr_3d, 'pattern': 'lawn'})
+	corr_3d = [(-10.00, 0.00, -1.00),
+			   (10.00, 0.00, -1.00),
+			   (10.00, -10.00, -1.00),
+			   (-10.00, -10.00, -1.00)]
+	model.append({'set': corr_3d, 'pattern': 'lawn'})
 
-    corr_3d = [(-10.00, 0.00, 4.00),
-               (-3.00, 0.00, 4.00),
-               (-3.00, 0.00, -1.00),
-               (-10.00, 0.00, -1.00)]
-    model.append({'set': corr_3d, 'pattern': 'corridor'})
+	corr_3d = [(-10.00, 0.00, 4.00),
+			   (-3.00, 0.00, 4.00),
+			   (-3.00, 0.00, -1.00),
+			   (-10.00, 0.00, -1.00)]
+	model.append({'set': corr_3d, 'pattern': 'corridor'})
 
-    corr_3d = [(3.00, 0.00, 4.00),
-               (10.00, 0.00, 4.00),
-               (10.00, 0.00, -1.00),
-               (3.00, 0.00, -1.00)]
-    model.append({'set': corr_3d, 'pattern': 'corridor'})
+	corr_3d = [(3.00, 0.00, 4.00),
+			   (10.00, 0.00, 4.00),
+			   (10.00, 0.00, -1.00),
+			   (3.00, 0.00, -1.00)]
+	model.append({'set': corr_3d, 'pattern': 'corridor'})
 
     corr_3d = [(10.00, 0.00, 5.00),
                (12.00, 0.00, 5.00),
                (12.00, 0.00, -1.00),
                (10.00, 0.00, -1.00)]
     model.append({'set': corr_3d, 'pattern': 'staircase'})
-    for i in range(2):
-        offset = 1
-        if i == 1:
-            offset = -1
+    for offset in [1, -1]:
         for index in range(2):
-            corr_3d = [(10 * offset, -9.0, 10 - 5 * index),
-                       (10 * offset, -10, 10 - 5 * index),
-                       (10 * offset, -10, 5 - 5 * index),
-                       (10 * offset, -9.0, 5 - 5 * index)]
+            corr_3d = [(10 * offset, -9.0, 9 - 5 * index),
+                       (10 * offset, -10, 9 - 5 * index),
+                       (10 * offset, -10, 4 - 5 * index),
+                       (10 * offset, -9.0, 4 - 5 * index)]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(10 * offset, -8.0, 10 - 5 * index),
-                       (10 * offset, -9.0, 10 - 5 * index),
-                       (10 * offset, -9.0, 5 - 5 * index),
-                       (10 * offset, -8.0, 5 - 5 * index)]
+            corr_3d = [(10 * offset, -8.0, 9 - 5 * index),
+                       (10 * offset, -9.0, 9 - 5 * index),
+                       (10 * offset, -9.0, 4 - 5 * index),
+                       (10 * offset, -8.0, 4 - 5 * index)]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(10 * offset, -7.0, 10 - 5 * index),
-                       (10 * offset, -8.0, 10 - 5 * index),
-                       (10 * offset, -8.0, 5 - 5 * index),
-                       (10 * offset, -7.0, 5 - 5 * index)
+            corr_3d = [(10 * offset, -7.0, 9 - 5 * index),
+                       (10 * offset, -8.0, 9 - 5 * index),
+                       (10 * offset, -8.0, 4 - 5 * index),
+                       (10 * offset, -7.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(11 * offset, -7.0, 10 - 5 * index),
-                       (10 * offset, -7.0, 10 - 5 * index),
-                       (10 * offset, -7.0, 5 - 5 * index),
-                       (11 * offset, -7.0, 5 - 5 * index)
+            corr_3d = [(11 * offset, -7.0, 9 - 5 * index),
+                       (10 * offset, -7.0, 9 - 5 * index),
+                       (10 * offset, -7.0, 4 - 5 * index),
+                       (11 * offset, -7.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(12 * offset, -7.0, 10 - 5 * index),
-                       (11 * offset, -7.0, 10 - 5 * index),
-                       (11 * offset, -7.0, 5 - 5 * index),
-                       (12 * offset, -7.0, 5 - 5 * index)
+            corr_3d = [(12 * offset, -7.0, 9 - 5 * index),
+                       (11 * offset, -7.0, 9 - 5 * index),
+                       (11 * offset, -7.0, 4 - 5 * index),
+                       (12 * offset, -7.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(12 * offset, -6.0, 10 - 5 * index),
-                       (12 * offset, -7.0, 10 - 5 * index),
-                       (12 * offset, -7.0, 5 - 5 * index),
-                       (12 * offset, -6.0, 5 - 5 * index)
+            corr_3d = [(12 * offset, -6.0, 9 - 5 * index),
+                       (12 * offset, -7.0, 9 - 5 * index),
+                       (12 * offset, -7.0, 4 - 5 * index),
+                       (12 * offset, -6.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(12 * offset, -5.0, 10 - 5 * index),
-                       (12 * offset, -6.0, 10 - 5 * index),
-                       (12 * offset, -6.0, 5 - 5 * index),
-                       (12 * offset, -5.0, 5 - 5 * index)
+            corr_3d = [(12 * offset, -5.0, 9 - 5 * index),
+                       (12 * offset, -6.0, 9 - 5 * index),
+                       (12 * offset, -6.0, 4 - 5 * index),
+                       (12 * offset, -5.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(12 * offset, -4.0, 10 - 5 * index),
-                       (12 * offset, -5.0, 10 - 5 * index),
-                       (12 * offset, -5.0, 5 - 5 * index),
-                       (12 * offset, -4.0, 5 - 5 * index)
+            corr_3d = [(12 * offset, -4.0, 9 - 5 * index),
+                       (12 * offset, -5.0, 9 - 5 * index),
+                       (12 * offset, -5.0, 4 - 5 * index),
+                       (12 * offset, -4.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(11 * offset, -4.0, 10 - 5 * index),
-                       (12 * offset, -4.0, 10 - 5 * index),
-                       (12 * offset, -4.0, 5 - 5 * index),
-                       (11 * offset, -4.0, 5 - 5 * index)
+            corr_3d = [(11 * offset, -4.0, 9 - 5 * index),
+                       (12 * offset, -4.0, 9 - 5 * index),
+                       (12 * offset, -4.0, 4 - 5 * index),
+                       (11 * offset, -4.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(10 * offset, -4.0, 10 - 5 * index),
-                       (11 * offset, -4.0, 10 - 5 * index),
-                       (11 * offset, -4.0, 5 - 5 * index),
-                       (10 * offset, -4.0, 5 - 5 * index)
+            corr_3d = [(10 * offset, -4.0, 9 - 5 * index),
+                       (11 * offset, -4.0, 9 - 5 * index),
+                       (11 * offset, -4.0, 4 - 5 * index),
+                       (10 * offset, -4.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(10 * offset, -3.0, 10 - 5 * index),
-                       (10 * offset, -4.0, 10 - 5 * index),
-                       (10 * offset, -4.0, 5 - 5 * index),
-                       (10 * offset, -3.0, 5 - 5 * index)
+            corr_3d = [(10 * offset, -3.0, 9 - 5 * index),
+                       (10 * offset, -4.0, 9 - 5 * index),
+                       (10 * offset, -4.0, 4 - 5 * index),
+                       (10 * offset, -3.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(10 * offset, -2.0, 10 - 5 * index),
-                       (10 * offset, -3.0, 10 - 5 * index),
-                       (10 * offset, -3.0, 5 - 5 * index),
-                       (10 * offset, -2.0, 5 - 5 * index)
+            corr_3d = [(10 * offset, -2.0, 9 - 5 * index),
+                       (10 * offset, -3.0, 9 - 5 * index),
+                       (10 * offset, -3.0, 4 - 5 * index),
+                       (10 * offset, -2.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
@@ -287,6 +283,11 @@ def defineModel():
                    (10 * offset, 0.0, 0)]
         model.append({'set': corr_3d, 'pattern': 'rightbuildingfar'})
 
+		corr_3d = [(10*offset, 0.0, 10),
+				   (10*offset, -2.0, 10),
+				   (10*offset, -2.0, 0),
+				   (10*offset, 0.0, 0)]
+		model.append({'set': corr_3d, 'pattern': 'rightbuildingfar'})
 
 def contains(element, list):
     try:

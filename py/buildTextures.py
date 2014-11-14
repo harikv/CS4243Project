@@ -98,8 +98,7 @@ def processPolygon(polygon, rows, columns, mode):
     return points
 
 
-def buildTextureFromImage(imgURL, pts, mode):
-    print imgURL
+def buildTextureFromImage(imgURL, pts):
     img = cv2.imread(imgURL, cv2.CV_LOAD_IMAGE_COLOR)
     if(len(img) == 0):
         return
@@ -121,33 +120,44 @@ def buildSolidTexture(width, height, colour_code):
     return np.asarray(new_img)
 
 # front building
-textures['front'] = expandTexture(buildTextureFromImage('../project.jpeg', [[706, 740], [836, 740], [836, 870], [706, 870]], "H"), 5)
-
+textures['front'] = expandTexture(buildTextureFromImage('../project.jpeg', [[706, 777], [836, 777], [836, 870], [706, 870]]), 5)
+textures['front-roof'] = expandTexture(buildTextureFromImage('../project.jpeg', [[763, 743], [783, 743], [843, 777], [701, 777]]), 5)
 # #sky
-textures['sky1'] = buildTextureFromImage('../sky.jpg', [(200, 0), (600, 0), (600, 200), (200, 200)], "V")
-textures['sky_main'] = buildTextureFromImage('../sky.jpg', [(200, 200), (600, 200), (600, 600), (200, 600)], "V")
-textures['sky3'] = buildTextureFromImage('../sky.jpg', [(200, 600), (600, 600), (600, 800), (200, 800)], "V")
-textures['sky4'] = buildTextureFromImage('../sky.jpg', [(0, 200), (200, 200), (200, 600), (0, 600)], "V")
-textures['sky5'] = buildTextureFromImage('../sky.jpg', [(600, 200), (800, 200), (800, 600), (600, 600)], "V")
+textures['sky1'] = buildTextureFromImage('../sky.jpg', [(200, 0), (600, 0), (600, 200), (200, 200)])
+textures['sky_main'] = buildTextureFromImage('../sky.jpg', [(200, 200), (600, 200), (600, 600), (200, 600)])
+textures['sky3'] = buildTextureFromImage('../sky.jpg', [(200, 600), (600, 600), (600, 800), (200, 800)])
+textures['sky4'] = buildTextureFromImage('../sky.jpg', [(0, 200), (200, 200), (200, 600), (0, 600)])
+textures['sky5'] = buildTextureFromImage('../sky.jpg', [(600, 200), (800, 200), (800, 600), (600, 600)])
 
 #ground
 textures['ground'] = buildSolidTexture(600, 600, (179, 222, 245))
 
 #lawn
-textures['lawn'] = expandTexture(buildTextureFromImage('../project.jpeg', [[551, 867], [965, 872], [1636, 1224], [0, 1224]], "V"), 1)
+textures['lawn'] = expandTexture(buildTextureFromImage('../project.jpeg', [[551, 867], [965, 872], [1636, 1224], [0, 1224]]), 1)
 
-# # building-right-unit
-textures['bru'] = expandTexture(buildTextureFromImage('../project.jpeg', [[1510, 593], [1572, 568], [1572, 722], [1510, 730]], "H"), 5)
+# building-right-unit
+textures['bru'] = expandTexture(buildTextureFromImage('../project.jpeg', [[1510, 593], [1572, 568], [1572, 722], [1510, 730]]), 5)
+
+#building roof
+textures['roof'] = expandTexture(buildTextureFromImage('../project.jpeg', [[1261, 654], [1323, 655], [1327, 675], [1225, 675]]), 5)
+cv2.imwrite('roof.png', textures['roof'])
+
+#circular tower
+textures['tower'] = expandTexture(buildTextureFromImage('../project.jpeg', [[749, 669], [799, 669], [799, 733], [749, 733]]), 1)
+
+#far tower
+textures['ftower'] = expandTexture(buildTextureFromImage('../project.jpeg', [[863, 779], [865, 665], [941, 669], [947, 787]]), 1)
+
+# trees
+textures['trees'] = expandTexture(buildTextureFromImage('../project.jpeg', [[1, 327], [583, 633], [537, 863], [3, 901]]), 1)
 
 # #staircase
-textures['staircase'] = buildTextureFromImage('../project.jpeg', [[984, 749], [1100, 749], [1100, 849], [984, 849]],
-                                              "V")
+textures['staircase'] = buildTextureFromImage('../project.jpeg', [[984, 749], [1100, 749], [1100, 849], [984, 849]])
 
 # #corridor
-textures['corridor'] = buildTextureFromImage('../project.jpeg', [[836, 787], [941, 787], [941, 859], [836, 859]], "V")
+textures['corridor'] = buildTextureFromImage('../project.jpeg', [[836, 787], [941, 787], [941, 859], [836, 859]])
 
 # #rightbuildingfar
-textures['rightbuildingfar'] = buildTextureFromImage('../project.jpeg',
-                                                     [[1129, 725], [1172, 725], [1172, 859], [1129, 859]], "V")
+textures['rightbuildingfar'] = buildTextureFromImage('../project.jpeg', [[1129, 725], [1172, 725], [1172, 859], [1129, 859]])
 
 write_texture_file('textures.csv')

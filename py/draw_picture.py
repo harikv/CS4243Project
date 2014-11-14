@@ -3,17 +3,18 @@ from geometry import Vector, Rectangle, Triangle
 import math
 import numpy as np
 
-viewing_angle_in_radians = math.pi/2
+viewing_angle_in_radians = math.pi / 2
+
 
 def main():
     # First try to draw scene
     shapes = [
-        Rectangle(Vector(-10, -30, -3), Vector(0, 30, 0),   Vector(20, 0, 0)),  # Grass
-        Triangle(Vector(-4, 0, 1.5),    Vector(4, 0, 1.5),  Vector(8, 0, 0)),   # Church front facade top
-        Rectangle(Vector(-4, 0, -2.5),  Vector(0, 0, 4),    Vector(0, 5, 0)),   # Church left side of front facade
-        Rectangle(Vector(4, 0, -2.5),   Vector(0, 0, 4),    Vector(0, 5, 0)),   # Church right side of front facade
-        Rectangle(Vector(-4, 0, 1.5),   Vector(4, 0, 1.5),  Vector(0, 5, 0)),   # Church left side of ceiling
-        Rectangle(Vector(0, 0, 3),      Vector(4, 0, -1.5), Vector(0, 5, 0))    # Church right side of ceiling
+        Rectangle(Vector(-10, -30, -3), Vector(0, 30, 0), Vector(20, 0, 0)),  # Grass
+        Triangle(Vector(-4, 0, 1.5), Vector(4, 0, 1.5), Vector(8, 0, 0)),  # Church front facade top
+        Rectangle(Vector(-4, 0, -2.5), Vector(0, 0, 4), Vector(0, 5, 0)),  # Church left side of front facade
+        Rectangle(Vector(4, 0, -2.5), Vector(0, 0, 4), Vector(0, 5, 0)),  # Church right side of front facade
+        Rectangle(Vector(-4, 0, 1.5), Vector(4, 0, 1.5), Vector(0, 5, 0)),  # Church left side of ceiling
+        Rectangle(Vector(0, 0, 3), Vector(4, 0, -1.5), Vector(0, 5, 0))  # Church right side of ceiling
     ]
 
     church_front_facade = Rectangle(Vector(-4, 0, -2.5), Vector(0, 0, 4), Vector(8, 0, 0))  # Church front facade
@@ -24,7 +25,6 @@ def main():
     pts = []
     for x in [s.get_points(ppm=3) for s in shapes]:
         pts.extend(x)
-
 
     project(pts, [0, -20, 1.5], viewing_angle_in_radians)
 
@@ -108,12 +108,14 @@ def get_corners_of_cut_texture(points, lines, factors):
     :param factors: how far up the line a cut should be made (one factor pr. line)
     :return: the corners of the cut polygon
     """
+
     def cut_line(info):
         next_i = (info[0] + 1) % len(points)
         line_direction = points[next_i] - points[info[0]]
         return info[1] * line_direction + points[info[0]]
 
     return [cut_line(x) for x in zip(lines, factors)]
+
 
 if __name__ == '__main__':
     main()

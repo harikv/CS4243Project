@@ -44,6 +44,33 @@ def contains(element, list):
     except ValueError:
         return False
 
+def getDivisions(pt1, pt2, granularity):
+    vector = np.array([(x[1] - x[0]) for x in zip(pt1, pt2)])
+    return [(np.array(pt1) + (vector * (i) / (granularity+1))) for i in range(1, granularity + 1)]
+
+def expandTexture(texture, granularity = 1):
+    newTexture = []
+    for row in range(len(texture)):
+        newTexture.append(texture[row])
+        if row != len(texture) - 1:
+            newTexture.extend(getExtraColors(texture[row], texture[row+1], granularity))
+    newTextureT = np.transpose(newTexture, [1,0,2])
+    newTexture = []
+    for row in range(len(newTextureT)):
+        newTexture.append(newTextureT[row])
+        if row != len(newTextureT) - 1:
+            newTexture.extend(getExtraColors(newTextureT[row], newTextureT[row+1], granularity))
+    return np.transpose(newTexture, [1,0,2])
+
+def getExtraColors(row1, row2, granularity):
+    if len(row1) != len(row2) :
+        print "Rows Not Equal"
+        return []
+    if granularity < 1:
+        return []
+    color_array = [getDivisions(np.asarray(color1, dtype='float64'), np.asarray(color2, dtype='float64'), granularity) for
+                   color1, color2 in zip(row1, row2)]
+    return np.transpose(color_array, [1,0,2])
 
 def processPolygon(polygon, rows, columns, mode):
     length = len(polygon)
@@ -72,6 +99,7 @@ def processPolygon(polygon, rows, columns, mode):
 
 
 def buildTextureFromImage(imgURL, pts, mode):
+    print imgURL
     img = cv2.imread(imgURL, cv2.CV_LOAD_IMAGE_COLOR)
     if(len(img) == 0):
         return
@@ -93,7 +121,7 @@ def buildSolidTexture(width, height, colour_code):
     return np.asarray(new_img)
 
 # front building
-textures['front'] = buildTextureFromImage('../project.jpeg', [[706, 740], [836, 740], [836, 870], [706, 870]], "H")
+textures['front'] = expandTexture(buildTextureFromImage('../project.jpeg', [[706, 740], [836, 740], [836, 870], [706, 870]], "H"), 5)
 
 # #sky
 textures['sky1'] = buildTextureFromImage('../sky.jpg', [(200, 0), (600, 0), (600, 200), (200, 200)], "V")
@@ -106,10 +134,10 @@ textures['sky5'] = buildTextureFromImage('../sky.jpg', [(600, 200), (800, 200), 
 textures['ground'] = buildSolidTexture(600, 600, (179, 222, 245))
 
 #lawn
-textures['lawn'] = buildTextureFromImage('../project.jpeg', [[551, 867], [965, 872], [1636, 1224], [0, 1224]], "V")
+textures['lawn'] = expandTexture(buildTextureFromImage('../project.jpeg', [[551, 867], [965, 872], [1636, 1224], [0, 1224]], "V"), 1)
 
 # # building-right-unit
-textures['bru'] = buildTextureFromImage('../project.jpeg', [[1510, 593], [1572, 568], [1572, 722], [1510, 730]], "H")
+textures['bru'] = expandTexture(buildTextureFromImage('../project.jpeg', [[1510, 593], [1572, 568], [1572, 722], [1510, 730]], "H"), 5)
 
 # #staircase
 textures['staircase'] = buildTextureFromImage('../project.jpeg', [[984, 749], [1100, 749], [1100, 849], [984, 849]],

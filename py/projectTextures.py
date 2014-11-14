@@ -100,7 +100,7 @@ def carryOutDithering(iteration, img):
     return replace_null_img(img)
 
 
-def populate_texture_list(fileName):
+def populate_texture_list(fileName, textures):
     with open(fileName, 'rb') as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar='|')
         info_row = next(reader)
@@ -116,6 +116,7 @@ def populate_texture_list(fileName):
                 int_next_row = [eval(x) for x in next_row]
                 texture_array[row] = int_next_row
             textures[texture_info[0]] = texture_array
+    return textures
 
 
 def createNullImage(shape):
@@ -128,7 +129,7 @@ def createNullImage(shape):
     return np.asarray(newImage)
 
 
-def defineModel():
+def defineModel(model):
     # corr_3d = [(-20.00,20.00,-1.00),
     # (20.00,20.00,-1.00),
     # (20.00,20.00,19.00),
@@ -286,6 +287,7 @@ def defineModel():
                    (10 * offset, -2.0, 0),
                    (10 * offset, 0.0, 0)]
         model.append({'set': corr_3d, 'pattern': 'rightbuildingfar'})
+    return model
 
 
 def contains(element, list):
@@ -297,8 +299,8 @@ def contains(element, list):
 
 def processPolygon(polygon):
     length = len(polygon)
-    rows = max([x for (x, y) in polygon])
-    columns = max([y for (x, y) in polygon])
+    rows = int(max([x for (x, y) in polygon]))
+    columns = int(max([y for (x, y) in polygon]))
     polygon.append((0.0, 0.0))
     codes = [Path.MOVETO]
     for index in range(length - 1):
@@ -306,24 +308,16 @@ def processPolygon(polygon):
     codes.append(Path.CLOSEPOLY)
     path = Path(polygon, codes)
     points = []
-    if mode == 'V':
-        for index in range(rows):
-            row = [(index, x) for x in range(columns)]
-            check = path.contains_points(row)
-            temp_points = ([row[i] for i, j in enumerate(check) if j == True and not contains(row[i], polygon)])
-            if (len(temp_points) > 0):
-                points.append(temp_points)
-    else:
-        for index in range(columns):
-            col = [(x, index) for x in range(rows)]
-            check = path.contains_points(col)
-            temp_points = ([col[i] for i, j in enumerate(check) if j == True and not contains(col[i], polygon)])
-            if (len(temp_points) > 0):
-                points.append(temp_points)
+    for index in range(rows):
+        row = [(index, x) for x in range(columns)]
+        check = path.contains_points(row)
+        temp_points = ([row[i] for i, j in enumerate(check) if j == True and not contains(row[i], polygon)])
+        if (len(temp_points) > 0):
+            points.append(temp_points)
     return points
 
 
-def quantize(max_x, min_x, max_y, min_y, input_list):
+def quantize(max_x, min_x, max_y, min_y, input_list, viewport):
     output_list = []
     for (x, y) in input_list:
         output_list.append((int((y - min_y) / (max_y - min_y) * 10000 * (viewport[1] - 1) / 10000),
@@ -332,8 +326,15 @@ def quantize(max_x, min_x, max_y, min_y, input_list):
 
 
 def mapTexture(texture_image, input_points, output_points, output_img):
-    transform_matrix = cv2.getPerspectiveTransform(input_points, np.asarray(output_points, dtype='float32'))
-    points = processPolygon(output_points)
+    # print input_points.shape, np.asarray(output_points, dtype='float32').shape
+    new_input = input_points
+    new_output = output_points
+    if input_points.shape[0] > 4:
+        new_input = np.asarray(input_points[0:4], dtype='float32')
+    if output_points.shape[0] > 4:
+        new_output = np.asarray(output_points[0:4], dtype='float32')
+    transform_matrix = cv2.getPerspectiveTransform(new_input, new_output)
+    points = processPolygon(output_points.tolist())
     inverse_transform = la.inv(transform_matrix)
     max_x = max([x[0] for x in input_points])
     max_y = max([x[1] for x in input_points])
@@ -361,10 +362,14 @@ def switchOffPixelsInArray(array, points):
     return newArray
 
 
-def projectModelPoints():
+def projectModelPoints(camera_position, camera_orientation, model, textures):
     global out_img
-    camera_position = np.array([8.00, -5.00, 5.00])
-    camera_orientation = np.matrix([[0.00, 0.00, 1.00], [0.00, -1.00, 0.00], [1.00, 0.00, 0.00]])
+    viewport = (300, 400)
+    viewing_angle_in_radians = degtorad(90)
+    mode = 'V'
+    out_img = createNullImage(viewport)
+    # camera_position = np.array([0.00, -11.00, 5.00])
+    # camera_orientation = np.matrix([[0.00, 0.00, 1.00], [1.00, 0.00, 0.00], [0.00, 1.00, 0.00]])
     modelsProjected = []
     allProjectedPoints = []
     for i in range(len(model)):
@@ -402,22 +407,14 @@ def projectModelPoints():
     max_y = max([x[1] for x in allProjectedPoints])
     for row in modelsProjected:
         input_texture = np.array(row['patternCoords'], dtype=np.float32)
-        out_img = mapTexture(row['pattern'], input_texture, quantize(max_x, min_x, max_y, min_y, row['set']), out_img)
+        corr_points = np.asarray(quantize(max_x, min_x, max_y, min_y, row['set'], viewport), dtype='float32')
+        out_img = mapTexture(row['pattern'], input_texture, corr_points, out_img)
 
+    out_img = carryOutDithering(2, out_img)
+    return out_img
 
-viewport = (300, 400)
-viewing_angle_in_radians = degtorad(90)
-mode = 'V'
-model = []
-textures = {}
-
-defineModel()
-populate_texture_list('textures.csv')
-out_img = createNullImage(viewport)
-projectModelPoints()
-out_img = carryOutDithering(5, out_img)
-cv2.imwrite("pers.jpg", out_img)
-
+# out_img = projectModelPoints(np.array([0.00, -11.00, 5.00]), np.matrix([[0.00, 0.00, 1.00], [1.00, 0.00, 0.00], [0.00, 1.00, 0.00]]))
+# cv2.imwrite("pers.jpg", out_img)
 
 
 

@@ -8,14 +8,17 @@ import csv
 from numpy import linalg as la
 from draw_picture import get_corners_of_cut_texture, get_cutoff_points, add_dummy_point
 
+
 def compare_floats(f1, f2):
     return abs(f1 - f2) <= 0.00001
+
 
 def compare_color(color1, color2):
     if (compare_floats(color1[0], color2[0]) and compare_floats(color1[1], color2[1]) and compare_floats(color1[2],
                                                                                                          color2[2])):
         return True
     return False
+
 
 def replace_null_img(img):
     num_rows = img.shape[0]
@@ -26,6 +29,7 @@ def replace_null_img(img):
             if (compare_color(img[row][column], null_color)):
                 img[row][column] = np.array([0.00, 0.00, 0.00])
     return img
+
 
 def carryOutDithering(iteration, img):
     num_rows = img.shape[0]
@@ -95,6 +99,7 @@ def carryOutDithering(iteration, img):
                         img[row][column] = avg
     return replace_null_img(img)
 
+
 def populate_texture_list(fileName):
     with open(fileName, 'rb') as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar='|')
@@ -112,6 +117,7 @@ def populate_texture_list(fileName):
                 texture_array[row] = int_next_row
             textures[texture_info[0]] = texture_array
 
+
 def createNullImage(shape):
     newImage = []
     null_color = np.array([256.00, 256.00, 256.00])
@@ -121,11 +127,12 @@ def createNullImage(shape):
             newImage[row].append(null_color)
     return np.asarray(newImage)
 
+
 def defineModel():
     # corr_3d = [(-20.00,20.00,-1.00),
     # (20.00,20.00,-1.00),
     # (20.00,20.00,19.00),
-    #        (-20.00,20.00,19.00)]
+    # (-20.00,20.00,19.00)]
     # model.append({'set': corr_3d, 'pattern': 'sky1'})
 
     # corr_3d = [(-20.00,20.00,19.00),
@@ -192,100 +199,101 @@ def defineModel():
         if i == 1:
             offset = -1
         for index in range(2):
-            corr_3d = [(10*offset, -9.0, 10-5*index),
-                       (10*offset, -10, 10-5*index),
-                       (10*offset, -10, 5-5*index),
-                       (10*offset, -9.0, 5-5*index)]
+            corr_3d = [(10 * offset, -9.0, 10 - 5 * index),
+                       (10 * offset, -10, 10 - 5 * index),
+                       (10 * offset, -10, 5 - 5 * index),
+                       (10 * offset, -9.0, 5 - 5 * index)]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(10*offset, -8.0, 10-5*index),
-                       (10*offset, -9.0, 10-5*index),
-                       (10*offset, -9.0, 5-5*index),
-                       (10*offset, -8.0, 5-5*index)]
+            corr_3d = [(10 * offset, -8.0, 10 - 5 * index),
+                       (10 * offset, -9.0, 10 - 5 * index),
+                       (10 * offset, -9.0, 5 - 5 * index),
+                       (10 * offset, -8.0, 5 - 5 * index)]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(10*offset, -7.0, 10-5*index),
-                       (10*offset, -8.0, 10-5*index),
-                       (10*offset, -8.0, 5-5*index),
-                       (10*offset, -7.0, 5-5*index)
+            corr_3d = [(10 * offset, -7.0, 10 - 5 * index),
+                       (10 * offset, -8.0, 10 - 5 * index),
+                       (10 * offset, -8.0, 5 - 5 * index),
+                       (10 * offset, -7.0, 5 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(11*offset, -7.0, 10-5*index),
-                       (10*offset, -7.0, 10-5*index),
-                       (10*offset, -7.0, 5-5*index),
-                       (11*offset, -7.0, 5-5*index)
+            corr_3d = [(11 * offset, -7.0, 10 - 5 * index),
+                       (10 * offset, -7.0, 10 - 5 * index),
+                       (10 * offset, -7.0, 5 - 5 * index),
+                       (11 * offset, -7.0, 5 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(12*offset, -7.0, 10-5*index),
-                       (11*offset, -7.0, 10-5*index),
-                       (11*offset, -7.0, 5-5*index),
-                       (12*offset, -7.0, 5-5*index)
+            corr_3d = [(12 * offset, -7.0, 10 - 5 * index),
+                       (11 * offset, -7.0, 10 - 5 * index),
+                       (11 * offset, -7.0, 5 - 5 * index),
+                       (12 * offset, -7.0, 5 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(12*offset, -6.0, 10-5*index),
-                       (12*offset, -7.0, 10-5*index),
-                       (12*offset, -7.0, 5-5*index),
-                       (12*offset, -6.0, 5-5*index)
+            corr_3d = [(12 * offset, -6.0, 10 - 5 * index),
+                       (12 * offset, -7.0, 10 - 5 * index),
+                       (12 * offset, -7.0, 5 - 5 * index),
+                       (12 * offset, -6.0, 5 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(12*offset, -5.0, 10-5*index),
-                       (12*offset, -6.0, 10-5*index),
-                       (12*offset, -6.0, 5-5*index),
-                       (12*offset, -5.0, 5-5*index)
+            corr_3d = [(12 * offset, -5.0, 10 - 5 * index),
+                       (12 * offset, -6.0, 10 - 5 * index),
+                       (12 * offset, -6.0, 5 - 5 * index),
+                       (12 * offset, -5.0, 5 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(12*offset, -4.0, 10-5*index),
-                       (12*offset, -5.0, 10-5*index),
-                       (12*offset, -5.0, 5-5*index),
-                       (12*offset, -4.0, 5-5*index)
+            corr_3d = [(12 * offset, -4.0, 10 - 5 * index),
+                       (12 * offset, -5.0, 10 - 5 * index),
+                       (12 * offset, -5.0, 5 - 5 * index),
+                       (12 * offset, -4.0, 5 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(11*offset, -4.0, 10-5*index),
-                       (12*offset, -4.0, 10-5*index),
-                       (12*offset, -4.0, 5-5*index),
-                       (11*offset, -4.0, 5-5*index)
+            corr_3d = [(11 * offset, -4.0, 10 - 5 * index),
+                       (12 * offset, -4.0, 10 - 5 * index),
+                       (12 * offset, -4.0, 5 - 5 * index),
+                       (11 * offset, -4.0, 5 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(10*offset, -4.0, 10-5*index),
-                       (11*offset, -4.0, 10-5*index),
-                       (11*offset, -4.0, 5-5*index),
-                       (10*offset, -4.0, 5-5*index)
+            corr_3d = [(10 * offset, -4.0, 10 - 5 * index),
+                       (11 * offset, -4.0, 10 - 5 * index),
+                       (11 * offset, -4.0, 5 - 5 * index),
+                       (10 * offset, -4.0, 5 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(10*offset, -3.0, 10-5*index),
-                       (10*offset, -4.0, 10-5*index),
-                       (10*offset, -4.0, 5-5*index),
-                       (10*offset, -3.0, 5-5*index)
+            corr_3d = [(10 * offset, -3.0, 10 - 5 * index),
+                       (10 * offset, -4.0, 10 - 5 * index),
+                       (10 * offset, -4.0, 5 - 5 * index),
+                       (10 * offset, -3.0, 5 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(10*offset, -2.0, 10-5*index),
-                       (10*offset, -3.0, 10-5*index),
-                       (10*offset, -3.0, 5-5*index),
-                       (10*offset, -2.0, 5-5*index)
+            corr_3d = [(10 * offset, -2.0, 10 - 5 * index),
+                       (10 * offset, -3.0, 10 - 5 * index),
+                       (10 * offset, -3.0, 5 - 5 * index),
+                       (10 * offset, -2.0, 5 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-
-        corr_3d = [(10*offset, 0.0, 10),
-                   (10*offset, -2.0, 10),
-                   (10*offset, -2.0, 0),
-                   (10*offset, 0.0, 0)]
+        corr_3d = [(10 * offset, 0.0, 10),
+                   (10 * offset, -2.0, 10),
+                   (10 * offset, -2.0, 0),
+                   (10 * offset, 0.0, 0)]
         model.append({'set': corr_3d, 'pattern': 'rightbuildingfar'})
+
 
 def contains(element, list):
     try:
         return bool(list.index(element))
     except ValueError:
         return False
+
 
 def processPolygon(polygon):
     length = len(polygon)
@@ -314,12 +322,14 @@ def processPolygon(polygon):
                 points.append(temp_points)
     return points
 
+
 def quantize(max_x, min_x, max_y, min_y, input_list):
     output_list = []
     for (x, y) in input_list:
         output_list.append((int((y - min_y) / (max_y - min_y) * 10000 * (viewport[1] - 1) / 10000),
                             int((x - min_x) / (max_x - min_x) * 10000 * (viewport[0] - 1) / 10000)))
     return output_list
+
 
 def mapTexture(texture_image, input_points, output_points, output_img):
     transform_matrix = cv2.getPerspectiveTransform(input_points, np.asarray(output_points, dtype='float32'))
@@ -341,13 +351,15 @@ def mapTexture(texture_image, input_points, output_points, output_img):
             output_img[-point[1]][point[0]] = texture_image[corr_x][corr_y]
     return output_img
 
+
 def switchOffPixelsInArray(array, points):
     pointsInTexture = np.array(processPolygon(points))
-    pointsInTexture = np.reshape(pointsInTexture, (pointsInTexture.shape[0]*pointsInTexture.shape[1], 2))
+    pointsInTexture = np.reshape(pointsInTexture, (pointsInTexture.shape[0] * pointsInTexture.shape[1], 2))
     newArray = createNullImage(array.shape)
     for point in pointsInTexture:
         newArray[point[0]][point[1]] = array[point[0]][point[1]]
     return newArray
+
 
 def projectModelPoints():
     global out_img
@@ -362,25 +374,28 @@ def projectModelPoints():
 
         # cutoff model by camera plane - new points
         temp_points, lines, factors = get_cutoff_points(np.asarray(single3dSet), camera_position, camera_orientation)
-        if(len(temp_points) == 0):
+        if (len(temp_points) == 0):
             continue
         elif len(temp_points) < 4:
             temp_points, lines, factors = add_dummy_point(temp_points, lines, factors)
         texture_container = np.array([[0, 0], [0, singleTexture.shape[1] - 1],
-                                     [singleTexture.shape[0] - 1, singleTexture.shape[1] - 1], [singleTexture.shape[0] - 1, 0]])
+                                      [singleTexture.shape[0] - 1, singleTexture.shape[1] - 1],
+                                      [singleTexture.shape[0] - 1, 0]])
         temp_texture = get_corners_of_cut_texture(texture_container, lines, factors)
-        #new texture
+        # new texture
         # singleTexture = switchOffPixelsInArray(singleTexture, temp_texture)
         for point in temp_points:
-            projectedPoint = return_projected_point(np.array(point), (camera_position-camera_orientation[2].getA1()), viewing_angle_in_radians,
+            projectedPoint = return_projected_point(np.array(point), (camera_position - camera_orientation[2].getA1()),
+                                                    viewing_angle_in_radians,
                                                     camera_orientation)
             if (projectedPoint is not None):
                 projectedPoints.append(projectedPoint)
                 allProjectedPoints.append(projectedPoint)
             if len(projectedPoints) >= 4:
-                modelsProjected.append({'set': projectedPoints, 'pattern': singleTexture, 'patternCoords': temp_texture})
+                modelsProjected.append(
+                    {'set': projectedPoints, 'pattern': singleTexture, 'patternCoords': temp_texture})
 
-    #start projecting on image - quantize, then assign
+                # start projecting on image - quantize, then assign
     min_x = min([x[0] for x in allProjectedPoints])
     min_y = min([x[1] for x in allProjectedPoints])
     max_x = max([x[0] for x in allProjectedPoints])

@@ -48,11 +48,11 @@ class TestCutoffPointCalculation(unittest.TestCase):
         new_corners, lines, factors = get_cutoff_points(self.flat_square, cam_pos, cam_orient)
         self.assertEqual(len(new_corners), 5)
         self.assertTrue(np.array_equal(new_corners, np.array([
-            [-10, -9, 0],   # New corner
-            [-10, 10, 0],   # Corner C2
-            [10, 10, 0],    # Corner C3
-            [10, -10, 0],   # Corner C4
-            [-9, -10, 0]    # New corner
+            [-10, -9, 0],
+            self.flat_square[1],
+            self.flat_square[2],
+            self.flat_square[3],
+            [-9, -10, 0]
         ])))
         self.assertEqual(lines, [0, 1, 2, 3, 3])
         self.assertEqual(factors, [0.05, 0, 0, 0, 0.95])
@@ -68,10 +68,10 @@ class TestCutoffPointCalculation(unittest.TestCase):
         new_corners, lines, factors = get_cutoff_points(self.flat_square, cam_pos, self.straight_cam_orient)
         self.assertEqual(len(new_corners), 4)
         self.assertTrue(np.array_equal(new_corners, np.array([
-            [-10, 0, 0],    # New corner
-            [-10, 10, 0],   # Corner C2
-            [10, 10, 0],    # Corner C3
-            [10, 0, 0]      # New corner
+            [-10, 0, 0],
+            self.flat_square[1],
+            self.flat_square[2],
+            [10, 0, 0]
         ])))
         self.assertEqual(lines, [0, 1, 2, 2])
         self.assertEqual(factors, [0.5, 0, 0, 0.5])
@@ -93,7 +93,7 @@ class TestCutoffPointCalculation(unittest.TestCase):
         new_corners, lines, factors = get_cutoff_points(self.flat_square, cam_pos, cam_orient)
         self.assertEqual(len(new_corners), 3)
         self.assertTrue(np.array_equal(new_corners, np.array([
-            [-10, -10, 0],  # Corner C1
+            self.flat_square[0],
             [-10, -9, 0],   # New corner
             [-9, -10, 0]    # New corner
         ])))
@@ -118,9 +118,9 @@ class TestCutoffPointCalculation(unittest.TestCase):
         new_corners, lines, factors = get_cutoff_points(self.flat_square, cam_pos, cam_orient)
         self.assertEqual(len(new_corners), 3)
         self.assertTrue(np.array_equal(new_corners, np.array([
-            [-10, 10, 0],   # Corner C2
-            [10, 10, 0],    # Corner C3
-            [10, -10, 0]    # Corner C4
+            self.flat_square[1],
+            self.flat_square[2],
+            self.flat_square[3]
         ])))
         self.assertEqual(lines, [1, 2, 3])
         self.assertEqual(factors, [0, 0, 0])
@@ -134,21 +134,21 @@ class TestCutoffTextures(unittest.TestCase):
 
         # The texture polygon
         texture = np.array([
-            [-5, -5, 0],  # Corner 1
-            [-5, 5, 0],   # Corner 2
-            [5, 5, 0],    # Corner 3
-            [5, -5, 0]    # Corner 4
+            [-5, -5, 0],
+            [-5, 5, 0],
+            [5, 5, 0],
+            [5, -5, 0]
         ])
 
         # Find new corners and assert correctness
         new_corners = get_corners_of_cut_texture(texture, lines, factors)
         self.assertEqual(len(new_corners), 5)
         self.assertTrue(np.array_equal(new_corners, np.array([
-            [-5, -4.5, 0],  # Corner
-            [-5, 5, 0],     # Corner 2
-            [5, 5, 0],      # Corner 3
-            [5, -5, 0],     # Corner 4
-            [-4.5, -5, 0]   # Corner
+            [-5, -4.5, 0],
+            texture[1],
+            texture[2],
+            texture[3],
+            [-4.5, -5, 0]
         ])))
 
 

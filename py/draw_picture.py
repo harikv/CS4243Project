@@ -1,4 +1,4 @@
-from projection import angle, dotproduct
+from projection import angle, dotproduct, length
 import math
 import numpy as np
 
@@ -89,3 +89,33 @@ def get_corners_of_cut_texture(points, lines, factors):
         return info[1] * line_direction + points[info[0]]
 
     return [cut_line(x) for x in zip(lines, factors)]
+
+
+def get_optical_axis(cam_orient):
+    return cam_orient[2].getA1()
+
+
+def get_model_comparator(cam_pos, cam_orient):
+    def comp(o1, o2):
+        o1_center = sum(o1) / float(len(o1))
+        o2_center = sum(o2) / float(len(o2))
+
+        optical_axis = get_optical_axis(cam_orient)
+        oa_dot_oa = dotproduct(optical_axis, optical_axis)
+
+        # Calculate the distance in the direction of the optical axis
+        vec_to_o1 = o1_center - cam_pos
+        vec_to_o2 = o2_center - cam_pos
+
+        proj_dist_to_o1 = length((dotproduct(vec_to_o1, optical_axis) / oa_dot_oa) * optical_axis)
+        proj_dist_to_o2 = length((dotproduct(vec_to_o2, optical_axis) / oa_dot_oa) * optical_axis)
+
+        if proj_dist_to_o1 != proj_dist_to_o2:
+            return proj_dist_to_o1 - proj_dist_to_o2
+
+        dist_to_o1 = length(o1_center - cam_pos)
+        dist_to_o2 = length(o2_center - cam_pos)
+
+        return dist_to_o1 - dist_to_o2
+
+    return comp

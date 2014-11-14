@@ -133,11 +133,13 @@ def get_model_comparator(cam_pos, cam_orient):
 
         # Compare projected distances
         if proj_dist_to_o1 != proj_dist_to_o2:
-            return proj_dist_to_o1 - proj_dist_to_o2
+            return -1 if proj_dist_to_o1 < proj_dist_to_o2 else 1
 
         # Compare euclidian distances
         dist_to_o1 = length(o1_center - cam_pos)
         dist_to_o2 = length(o2_center - cam_pos)
-        return dist_to_o1 - dist_to_o2
+        if dist_to_o1 != dist_to_o2:
+            return -1 if dist_to_o1 < dist_to_o2 else 1
+        return 0
 
     return comp

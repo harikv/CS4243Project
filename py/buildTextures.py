@@ -144,7 +144,6 @@ textures['tower'] = expandTexture(buildTextureFromImage('../project.jpeg', [[749
 
 #far tower
 textures['ftower'] = expandTexture(buildTextureFromImage('../project.jpeg', [[865, 665], [941, 669], [947, 787], [863, 779]]), 5)
-cv2.imwrite('ftower.jpg', textures['ftower'])
 
 # trees
 textures['trees'] = expandTexture(buildTextureFromImage('../project.jpeg', [[1, 327], [583, 633], [537, 863], [3, 901]]), 1)

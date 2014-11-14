@@ -7,7 +7,7 @@ from projectTextures import projectModelPoints, defineModel, populate_texture_li
 from projection import rotate, rotation_quaternion, quat2rot
 
 orig_orientation = np.matrix([[0.00, 0.00, 1.00], [1.00, 0.00, 0.00], [0.00, 1.00, 0.00]])
-orig_position = np.array([-4, -5, 1], dtype='float32')
+orig_position = np.array([0, -8, 1], dtype='float32')
 model = []
 textures = {}
 
@@ -37,10 +37,10 @@ textures = populate_texture_list('textures.csv', textures)
 # 	out.write(out_img);
 # 	orig_orientation *= quat2rot(rotation_quaternion([0, 0, 1], angle_step))
 
-# running forward and turning 90 degress right for 6 sec
+# running forward right for 6 sec
 camera_position = orig_position
 camera_orientation = orig_orientation
-angle_step = 90.0 / 150.0
+# angle_step = 90.0 / 150.0
 for i in range(0, 150):
     out_img = projectModelPoints(camera_position, camera_orientation, model, textures)
     out_img = np.array(out_img, dtype='uint8')
@@ -49,10 +49,38 @@ for i in range(0, 150):
     out.write(out_img)
     camera_position[1] += (math.pi) / 90
     camera_position[2] = (math.cos((i * 2 * math.pi) / 30) / 2)
-    print i * angle_step
-    camera_orientation = orig_orientation * quat2rot(rotation_quaternion([0, 0, 1], i * angle_step))
+    # print i * angle_step
+    # camera_orientation = orig_orientation * quat2rot(rotation_quaternion([0, 0, 1], i * angle_step))
     print camera_position
     print camera_orientation
+
+#turn up 45 degrees for 3 sec
+angle_step = 45.0/75.0
+for i in range(0, 75):
+    out_img = projectModelPoints(camera_position, camera_orientation, model, textures)
+    out_img = np.array(out_img, dtype='uint8')
+    # img_name = "frame%d.png" % i
+    # cv2.imwrite(img_name, out_img)
+    out.write(out_img)
+    # print i * angle_step
+    camera_orientation = orig_orientation * quat2rot(rotation_quaternion([1, 0, 0], i * angle_step))
+    print camera_position
+    print camera_orientation
+
+#move back while bringing camera down for 3 sec
+angle_step = -45.0/75.0
+for i in range(0,75):
+    out_img = projectModelPoints(camera_position, camera_orientation, model, textures)
+    out_img = np.array(out_img, dtype='uint8')
+    # img_name = "frame%d.png" % i
+    # cv2.imwrite(img_name, out_img)
+    out.write(out_img)
+    # print i * angle_step
+    camera_position[1] -= (math.pi) / 60
+    camera_orientation = camera_orientation * quat2rot(rotation_quaternion([1, 0, 0], i * angle_step))
+    print camera_position
+    print camera_orientation
+
 
 #Roll in place for 1 sec
 # angle_step = 6

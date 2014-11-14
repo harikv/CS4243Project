@@ -1,7 +1,7 @@
 import unittest
 
 import numpy as np
-from draw_picture import get_cutoff_points, get_corners_of_cut_texture, add_dummy_point, get_model_comparator
+from draw_picture import get_cutoff_points, get_corners_of_cut_texture, add_dummy_point, get_model_comparator, get_view_limit_planes
 
 
 class TestCutoffPointCalculation(unittest.TestCase):
@@ -25,7 +25,8 @@ class TestCutoffPointCalculation(unittest.TestCase):
         # Define the camera position to be in front of the square
         cam_pos = np.array([0, -15, 0])
 
-        new_corners, lines, factors = get_cutoff_points(self.flat_square, cam_pos, self.straight_cam_orient)
+        plane_normal_vector = -1 * self.straight_cam_orient[2].getA1()
+        new_corners, lines, factors = get_cutoff_points(self.flat_square, cam_pos, self.straight_cam_orient, plane_normal_vector)
 
         self.assertTrue(np.array_equal(new_corners, self.flat_square))
         self.assertEqual(lines, [0, 1, 2, 3])
@@ -45,7 +46,8 @@ class TestCutoffPointCalculation(unittest.TestCase):
             [1, 1, 0]    # Optical axis
         ])
 
-        new_corners, lines, factors = get_cutoff_points(self.flat_square, cam_pos, cam_orient)
+        plane_normal_vector = -1 * cam_orient[2].getA1()
+        new_corners, lines, factors = get_cutoff_points(self.flat_square, cam_pos, cam_orient, plane_normal_vector)
         self.assertEqual(len(new_corners), 5)
         self.assertTrue(np.array_equal(new_corners, np.array([
             [-10, -9, 0],
@@ -65,7 +67,8 @@ class TestCutoffPointCalculation(unittest.TestCase):
         # Position camera at origin
         cam_pos = np.array([0, 0, 0])
 
-        new_corners, lines, factors = get_cutoff_points(self.flat_square, cam_pos, self.straight_cam_orient)
+        plane_normal_vector = -1 * self.straight_cam_orient[2].getA1()
+        new_corners, lines, factors = get_cutoff_points(self.flat_square, cam_pos, self.straight_cam_orient, plane_normal_vector)
         self.assertEqual(len(new_corners), 4)
         self.assertTrue(np.array_equal(new_corners, np.array([
             [-10, 0, 0],
@@ -90,7 +93,8 @@ class TestCutoffPointCalculation(unittest.TestCase):
             [-1, -1, 0]  # Optical axis
         ])
 
-        new_corners, lines, factors = get_cutoff_points(self.flat_square, cam_pos, cam_orient)
+        plane_normal_vector = -1 * cam_orient[2].getA1()
+        new_corners, lines, factors = get_cutoff_points(self.flat_square, cam_pos, cam_orient, plane_normal_vector)
         self.assertEqual(len(new_corners), 3)
         self.assertTrue(np.array_equal(new_corners, np.array([
             self.flat_square[0],
@@ -115,7 +119,8 @@ class TestCutoffPointCalculation(unittest.TestCase):
             [1, 1, 0]    # Optical axis
         ])
 
-        new_corners, lines, factors = get_cutoff_points(self.flat_square, cam_pos, cam_orient)
+        plane_normal_vector = -1 * cam_orient[2].getA1()
+        new_corners, lines, factors = get_cutoff_points(self.flat_square, cam_pos, cam_orient, plane_normal_vector)
         self.assertEqual(len(new_corners), 3)
         self.assertTrue(np.array_equal(new_corners, np.array([
             self.flat_square[1],
@@ -259,6 +264,19 @@ class TestModelDistanceComparator(unittest.TestCase):
         ])
 
         self.assertLess(self.comparator(o1, o2), 0)
+
+
+class TestRestrictViewAngle(unittest.TestCase):
+    def setUp(self):
+        self.straight_cam_orient = np.matrix([
+            [1, 0, 0],  # Right side of the camera
+            [0, 0, 1],  # Top of the camera
+            [0, 1, 0]   # Optical axis
+        ])
+
+    def test_calculate_view_restricting_planes(self):
+        planes = get_view_limit_planes(self.straight_cam_orient)
+        # TODO test this shit, too tired :(
 
 
 if __name__ == '__main__':

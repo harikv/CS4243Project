@@ -1,28 +1,24 @@
 from projection import angle, dotproduct, length
+import projection
 import math
 import numpy as np
 
 
-def get_cutoff_points(points, cam_pos, cam_orient):
+def get_cutoff_points(points, cam_pos, cam_orient, cut_plane):
     """
     If some of the points are behind the camera, this function finds out where the
     image plane cuts the object.
     :param points: four points in 3D space defining a polygon
     :param cam_pos: the position of the camera
     :param cam_orient: the orientation of the camera
+    :param cut_plane: the plane that we should cut according to
     :return: a 3-tuple containing:
                the corners of the sliced polygon
                which line in the original polygon the corner lies on
                a factor telling how far up the line the new corner is located
 
     """
-    # Check if any points are behind the camera
-    def is_behind_camera(point):
-        vector_point_camera = point - cam_pos
-        in_angle = angle(vector_point_camera, cam_orient[2].getA()[0])
-        return in_angle > math.pi / 2
-
-    point_behind_camera = [is_behind_camera(p) for p in points]
+    point_outside_view = [project_point_on_vector(p - cam_pos, cut_plane) > 0 for p in points]
 
     # One or more corners are behind the camera check all lines
     new_corners = []
@@ -32,13 +28,13 @@ def get_cutoff_points(points, cam_pos, cam_orient):
         next_i = (i + 1) % len(points)
 
         # Add corner if it is not behind the camera
-        if not point_behind_camera[i]:
+        if not point_outside_view[i]:
             new_corners.append(points[i])
             line_segments.append(i)
             factors.append(0)
 
         # If the current point are in front of the camera and the next is behind the line is cut
-        if point_behind_camera[i] is not point_behind_camera[next_i]:
+        if point_outside_view[i] is not point_outside_view[next_i]:
             # Calculate where the line between the points intersects with the camera plane
             line_direction = points[next_i] - points[i]
             nominator = dotproduct(cam_pos - points[i], cam_orient[2].getA1())
@@ -143,3 +139,101 @@ def get_model_comparator(cam_pos, cam_orient):
         return 0
 
     return comp
+
+
+def get_view_limit_planes(cam_orient):
+    # TODO aspect ratio is fixed to 1:1
+    viewing_angle = 60.0
+
+    def rotate_camera(rotation_axis, degrees):
+        rotation_matrix = projection.quat2rot(projection.rotation_quaternion(rotation_axis, degrees))
+        return rotation_matrix * cam_orient
+
+    return [
+        rotate_camera(cam_orient[0].getA1(), viewing_angle / 2)[1].getA1(),
+        rotate_camera(cam_orient[0].getA1(), -viewing_angle / 2)[1].getA1() * -1,  # Make it point away from the image
+        rotate_camera(cam_orient[1].getA1(), viewing_angle / 2)[0].getA1(),
+        rotate_camera(cam_orient[1].getA1(), -viewing_angle / 2)[0].getA1() * -1   # Make it point away from the image
+    ]
+
+
+def line_intesects_plane(ia, ib, p0, n):
+    """
+    Calculate the intersection between a line and a plane
+    :param ia: a point on the line
+    :param ib: another point on the line
+    :param p0: a point in the plane
+    :param n: a normal vector for the plane
+    :return: the intersection point between the line and the plane
+    """
+    # Calculate where the line between the points intersects with the camera plane
+    # http://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection
+    line_direction = ib - ia
+    nominator = dotproduct(p0 - ia, n)
+    denominator = dotproduct(line_direction, n)
+    # If 0 < d < 1 the plane cuts the line between the two points
+    d = float(nominator) / denominator
+    return d * line_direction + ia, d
+
+
+def project_point_on_vector(p, v):
+    """
+    Projects a point onto a vector and returns the multiplication factor
+    :param p: point
+    :param v: vector
+    :return: the factor to multiply v with to get the projection
+    """
+    return dotproduct(p, v) / float(dotproduct(v, v))
+
+
+def cut_polygon_new(points, cam_pos, cam_orient):
+    for plane in get_view_limit_planes(cam_orient):
+        points = get_cutoff_points(points, cam_pos, cam_pos, plane)
+    return points
+
+
+#     # Step 1: cut away the part of the polygon that is above the top plane
+#     # Step 2: cut away the part of the polygon that is below the bottom plane
+#     # Step 3: cut away the part of the polygon that is right of the right plane
+#     # Step 4: cut away the part of the polygon that is left of the left plane
+#
+#     planes = get_view_limit_planes(cam_orient)
+#
+#     # find out which points are inside the image by projecting onto the normal
+#     # vector. If the factor is negative, the point is on the "right" side
+#     # of the plane, i.e. inside the image
+#     point_inside = [project_point_on_vector(p, planes[0]) < 0 for p in points]
+#     new_corners = []
+#     for i in range(len(points)):
+#         next_i = (i + 1) % len(points)
+#
+#         p0 = points[i]
+#         p1 = points[next_i]
+#
+#         if point_inside[i]:
+#             new_corners.append(points[i])
+#
+#         # If the current point are in front of the camera and the next is behind the line is cut
+#         if point_inside[i] is not point_inside[next_i]:
+#             # Calculate where the line between the points intersects with the camera plane
+#             intersection, d = line_intesects_plane(p0, p1, cam_pos, planes[0])
+#
+#             # If the factor is 0 or 1, the camera plane cuts directly through an existing corner.
+#             # This will be added in the next iteration, so don't add it here.
+#             if 0 < d < 1:
+#                 new_corners.append(intersection)
+#                 line_segments.append(i)
+#                 factors.append(factor)
+#
+#
+#
+#
+#
+#         intersection, d = line_intesects_plane(p0, p1, cam_pos, planes[0])
+#         if 0 < d < 1:
+#             # The line is cut
+#             # TODO insert new point
+#             pass
+#
+#
+#     pass

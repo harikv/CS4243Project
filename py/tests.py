@@ -134,21 +134,21 @@ class TestCutoffTextures(unittest.TestCase):
 
         # The texture polygon
         texture = np.array([
-            [-5, -5, 0],
-            [-5, 5, 0],
-            [5, 5, 0],
-            [5, -5, 0]
+            [-5, -5],
+            [-5, 5],
+            [5, 5],
+            [5, -5]
         ])
 
         # Find new corners and assert correctness
         new_corners = get_corners_of_cut_texture(texture, lines, factors)
         self.assertEqual(len(new_corners), 5)
         self.assertTrue(np.array_equal(new_corners, np.array([
-            [-5, -4.5, 0],
+            [-5, -4.5],
             texture[1],
             texture[2],
             texture[3],
-            [-4.5, -5, 0]
+            [-4.5, -5]
         ])))
 
 

@@ -412,8 +412,8 @@ def projectModelPoints(camera_position, camera_orientation, model, textures):
     out_img = carryOutDithering(2, out_img)
     return replace_null_img_with_sky(out_img)
 
-out_img = projectModelPoints(np.array([0.00, -9.00, 5.00]), np.matrix([[0.00, 0.00, 1.00], [1.00, 0.00, 0.00], [0.00, 1.00, 0.00]]), defineModel([]), populate_texture_list('textures.csv', {}))
-cv2.imwrite("pers.jpg", out_img)
+# out_img = projectModelPoints(np.array([0.00, -9.00, 5.00]), np.matrix([[0.00, 0.00, 1.00], [1.00, 0.00, 0.00], [0.00, 1.00, 0.00]]), defineModel([]), populate_texture_list('textures.csv', {}))
+# cv2.imwrite("pers.jpg", out_img)
 # cv2.imwrite('null.jpg', createNullImage([300, 400]))
 
 

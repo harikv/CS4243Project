@@ -5,25 +5,7 @@ import csv
 
 textures = {}
 
-# --------------------- reading and writing textures ----------------
-
-def populate_texture_list(fileName):
-    with open(fileName, 'rb') as csvfile:
-        reader = csv.reader(csvfile, delimiter=',', quotechar='|')
-        info_row = next(reader)
-        no_of_textures = int(info_row[0])
-        for i in range(no_of_textures):
-            texture_info = next(reader)
-            height_texture = int(texture_info[2])
-            width_texture = texture_info[1]
-            texture_array = []
-            for row in range(height_texture):
-                texture_array.append([])
-                next_row = next(reader)
-                int_next_row = [eval(x) for x in next_row]
-                texture_array[row] = int_next_row
-            textures[texture_info[0]] = texture_array
-
+# --------------------- writing textures ----------------
 
 def write_texture_file(fileName):
     with open(fileName, 'wb') as csvfile:
@@ -63,6 +45,9 @@ def expandTexture(texture, granularity = 1):
     return np.transpose(newTexture, [1,0,2])
 
 def getExtraColors(row1, row2, granularity):
+    """
+    Interpolating color rows between two rows
+    """
     if len(row1) != len(row2) :
         print "Rows Not Equal"
         return []
@@ -73,6 +58,9 @@ def getExtraColors(row1, row2, granularity):
     return np.transpose(color_array, [1,0,2])
 
 def processPolygon(polygon, rows, columns, mode):
+    """
+    Finds the points within a particular polygon
+    """
     length = len(polygon)
     polygon.append((0.0, 0.0))
     codes = [Path.MOVETO]
@@ -99,6 +87,9 @@ def processPolygon(polygon, rows, columns, mode):
 
 
 def buildTextureFromImage(imgURL, pts):
+    """
+    build an image texture from an image, by specifying the polygon on the image
+    """
     img = cv2.imread(imgURL, cv2.CV_LOAD_IMAGE_COLOR)
     if(len(img) == 0):
         return
@@ -111,6 +102,9 @@ def buildTextureFromImage(imgURL, pts):
 
 
 def buildSolidTexture(width, height, colour_code):
+    """
+    build an image texture from a solid color
+    """
     # colour code is a tuple of rgb values
     new_img = []
     for row in range(height):
@@ -118,6 +112,10 @@ def buildSolidTexture(width, height, colour_code):
         for column in range(width):
             new_img[row].append(np.array(list(colour_code)))
     return np.asarray(new_img)
+
+"""
+Started Creation of textures
+"""
 
 # front building
 textures['front'] = expandTexture(buildTextureFromImage('../project.jpeg', [[706, 777], [836, 777], [836, 870], [706, 870]]), 5)
@@ -160,4 +158,5 @@ textures['corridor'] = buildTextureFromImage('../project.jpeg', [[836, 787], [94
 # #rightbuildingfar
 textures['rightbuildingfar'] = buildTextureFromImage('../project.jpeg', [[1129, 725], [1172, 725], [1172, 859], [1129, 859]])
 
+#writing textures to csv file
 write_texture_file('textures.csv')

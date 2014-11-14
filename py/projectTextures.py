@@ -194,90 +194,87 @@ def defineModel():
                (12.00, 0.00, -1.00),
                (10.00, 0.00, -1.00)]
     model.append({'set': corr_3d, 'pattern': 'staircase'})
-    for i in range(2):
-        offset = 1
-        if i == 1:
-            offset = -1
+    for offset in [1, -1]:
         for index in range(2):
-            corr_3d = [(10 * offset, -9.0, 10 - 5 * index),
-                       (10 * offset, -10, 10 - 5 * index),
-                       (10 * offset, -10, 5 - 5 * index),
-                       (10 * offset, -9.0, 5 - 5 * index)]
+            corr_3d = [(10 * offset, -9.0, 9 - 5 * index),
+                       (10 * offset, -10, 9 - 5 * index),
+                       (10 * offset, -10, 4 - 5 * index),
+                       (10 * offset, -9.0, 4 - 5 * index)]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(10 * offset, -8.0, 10 - 5 * index),
-                       (10 * offset, -9.0, 10 - 5 * index),
-                       (10 * offset, -9.0, 5 - 5 * index),
-                       (10 * offset, -8.0, 5 - 5 * index)]
+            corr_3d = [(10 * offset, -8.0, 9 - 5 * index),
+                       (10 * offset, -9.0, 9 - 5 * index),
+                       (10 * offset, -9.0, 4 - 5 * index),
+                       (10 * offset, -8.0, 4 - 5 * index)]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(10 * offset, -7.0, 10 - 5 * index),
-                       (10 * offset, -8.0, 10 - 5 * index),
-                       (10 * offset, -8.0, 5 - 5 * index),
-                       (10 * offset, -7.0, 5 - 5 * index)
+            corr_3d = [(10 * offset, -7.0, 9 - 5 * index),
+                       (10 * offset, -8.0, 9 - 5 * index),
+                       (10 * offset, -8.0, 4 - 5 * index),
+                       (10 * offset, -7.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(11 * offset, -7.0, 10 - 5 * index),
-                       (10 * offset, -7.0, 10 - 5 * index),
-                       (10 * offset, -7.0, 5 - 5 * index),
-                       (11 * offset, -7.0, 5 - 5 * index)
+            corr_3d = [(11 * offset, -7.0, 9 - 5 * index),
+                       (10 * offset, -7.0, 9 - 5 * index),
+                       (10 * offset, -7.0, 4 - 5 * index),
+                       (11 * offset, -7.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(12 * offset, -7.0, 10 - 5 * index),
-                       (11 * offset, -7.0, 10 - 5 * index),
-                       (11 * offset, -7.0, 5 - 5 * index),
-                       (12 * offset, -7.0, 5 - 5 * index)
+            corr_3d = [(12 * offset, -7.0, 9 - 5 * index),
+                       (11 * offset, -7.0, 9 - 5 * index),
+                       (11 * offset, -7.0, 4 - 5 * index),
+                       (12 * offset, -7.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(12 * offset, -6.0, 10 - 5 * index),
-                       (12 * offset, -7.0, 10 - 5 * index),
-                       (12 * offset, -7.0, 5 - 5 * index),
-                       (12 * offset, -6.0, 5 - 5 * index)
+            corr_3d = [(12 * offset, -6.0, 9 - 5 * index),
+                       (12 * offset, -7.0, 9 - 5 * index),
+                       (12 * offset, -7.0, 4 - 5 * index),
+                       (12 * offset, -6.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(12 * offset, -5.0, 10 - 5 * index),
-                       (12 * offset, -6.0, 10 - 5 * index),
-                       (12 * offset, -6.0, 5 - 5 * index),
-                       (12 * offset, -5.0, 5 - 5 * index)
+            corr_3d = [(12 * offset, -5.0, 9 - 5 * index),
+                       (12 * offset, -6.0, 9 - 5 * index),
+                       (12 * offset, -6.0, 4 - 5 * index),
+                       (12 * offset, -5.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(12 * offset, -4.0, 10 - 5 * index),
-                       (12 * offset, -5.0, 10 - 5 * index),
-                       (12 * offset, -5.0, 5 - 5 * index),
-                       (12 * offset, -4.0, 5 - 5 * index)
+            corr_3d = [(12 * offset, -4.0, 9 - 5 * index),
+                       (12 * offset, -5.0, 9 - 5 * index),
+                       (12 * offset, -5.0, 4 - 5 * index),
+                       (12 * offset, -4.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(11 * offset, -4.0, 10 - 5 * index),
-                       (12 * offset, -4.0, 10 - 5 * index),
-                       (12 * offset, -4.0, 5 - 5 * index),
-                       (11 * offset, -4.0, 5 - 5 * index)
+            corr_3d = [(11 * offset, -4.0, 9 - 5 * index),
+                       (12 * offset, -4.0, 9 - 5 * index),
+                       (12 * offset, -4.0, 4 - 5 * index),
+                       (11 * offset, -4.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(10 * offset, -4.0, 10 - 5 * index),
-                       (11 * offset, -4.0, 10 - 5 * index),
-                       (11 * offset, -4.0, 5 - 5 * index),
-                       (10 * offset, -4.0, 5 - 5 * index)
+            corr_3d = [(10 * offset, -4.0, 9 - 5 * index),
+                       (11 * offset, -4.0, 9 - 5 * index),
+                       (11 * offset, -4.0, 4 - 5 * index),
+                       (10 * offset, -4.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(10 * offset, -3.0, 10 - 5 * index),
-                       (10 * offset, -4.0, 10 - 5 * index),
-                       (10 * offset, -4.0, 5 - 5 * index),
-                       (10 * offset, -3.0, 5 - 5 * index)
+            corr_3d = [(10 * offset, -3.0, 9 - 5 * index),
+                       (10 * offset, -4.0, 9 - 5 * index),
+                       (10 * offset, -4.0, 4 - 5 * index),
+                       (10 * offset, -3.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
-            corr_3d = [(10 * offset, -2.0, 10 - 5 * index),
-                       (10 * offset, -3.0, 10 - 5 * index),
-                       (10 * offset, -3.0, 5 - 5 * index),
-                       (10 * offset, -2.0, 5 - 5 * index)
+            corr_3d = [(10 * offset, -2.0, 9 - 5 * index),
+                       (10 * offset, -3.0, 9 - 5 * index),
+                       (10 * offset, -3.0, 4 - 5 * index),
+                       (10 * offset, -2.0, 4 - 5 * index)
             ]
             model.append({'set': corr_3d, 'pattern': 'bru'})
 
@@ -363,8 +360,8 @@ def switchOffPixelsInArray(array, points):
 
 def projectModelPoints():
     global out_img
-    camera_position = np.array([8.00, -5.00, 5.00])
-    camera_orientation = np.matrix([[0.00, 0.00, 1.00], [0.00, -1.00, 0.00], [1.00, 0.00, 0.00]])
+    camera_position = np.array([0.00, -11.00, 5.00])
+    camera_orientation = np.matrix([[0.00, 0.00, 1.00], [1.00, 0.00, 0.00], [0.00, 1.00, 0.00]])
     modelsProjected = []
     allProjectedPoints = []
     for i in range(len(model)):

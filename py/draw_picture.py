@@ -1,6 +1,7 @@
 from projection import project, angle, dotproduct
 from geometry import Vector, Rectangle, Triangle
 import math
+import numpy as np
 
 viewing_angle_in_radians = math.pi/2
 
@@ -79,6 +80,23 @@ def get_cutoff_points(points, cam_pos, cam_orient):
                 factors.append(factor)
 
     return new_corners, line_segments, factors
+
+
+def add_dummy_point(points, lines, factors):
+    """
+    Add a point to the polygon by putting in a dummy point on the first line
+    :param points: corner points of the polygon
+    :param lines: indices of the lines to cut
+    :param factors: how far up the line a cut should be made (one factor pr. line)
+    :return: a similar polygon with an extra point inserted on the first line.
+    """
+    new_line = lines[0]
+    new_factor = (1 + factors[0]) * 0.5 if lines[0] != lines[1] else factors[1] * 0.5
+    new_point = points[0] + (points[1] - points[0]) * 0.5
+
+    return np.insert(points, 1, new_point, axis=0), \
+           np.insert(lines, 1, new_line, axis=0), \
+           np.insert(factors, 1, new_factor, axis=0)
 
 
 def get_corners_of_cut_texture(points, lines, factors):

@@ -1,7 +1,7 @@
 import unittest
 
 import numpy as np
-from draw_picture import get_cutoff_points, get_corners_of_cut_texture
+from draw_picture import get_cutoff_points, get_corners_of_cut_texture, add_dummy_point
 
 
 class TestCutoffPointCalculation(unittest.TestCase):
@@ -150,6 +150,62 @@ class TestCutoffTextures(unittest.TestCase):
             [5, -5, 0],     # Corner 4
             [-4.5, -5, 0]   # Corner
         ])))
+
+
+class TestAddDummyPoint(unittest.TestCase):
+    def setUp(self):
+        self.c1 = [-10, -10, 0]
+        self.c2 = [-10, 10, 0]
+        self.c3 = [10, 10, 0]
+        self.c4 = [10, -10, 0]
+
+    def test_add_point_free_line(self):
+        # Mock output from the get_cutoff_points function
+        lines = [0, 1, 2]
+        factors = np.array([0, 0, 0], dtype=np.float32)
+        cutoff_polygon = np.array([self.c1, self.c2, self.c3])
+
+        # Find new corners and assert correctness
+        corners, lines, factors = add_dummy_point(cutoff_polygon, lines, factors)
+        self.assertTrue(np.array_equal(corners, np.array([self.c1, [-10, 0, 0], self.c2, self.c3])))
+        self.assertTrue(np.array_equal(lines, [0, 0, 1, 2]))
+        self.assertAlmostEqual(factors[1], 0.5)
+
+    def test_first_point_is_not_in_corner(self):
+        # Mock output from the get_cutoff_points function
+        lines = [0, 1, 2]
+        factors = np.array([0.1, 0, 0], dtype=np.float32)
+        cutoff_polygon = np.array([[-10, -8, 0], self.c2, self.c3])
+
+        # Find new corners and assert correctness
+        corners, lines, factors = add_dummy_point(cutoff_polygon, lines, factors)
+        self.assertTrue(np.array_equal(corners, np.array([[-10, -8, 0], [-10, 1, 0], self.c2, self.c3])))
+        self.assertTrue(np.array_equal(lines, [0, 0, 1, 2]))
+        self.assertAlmostEqual(factors[1], 0.55)
+
+    def test_second_point_is_not_in_corner(self):
+        # Mock output from the get_cutoff_points function
+        lines = [0, 0, 3]
+        factors = np.array([0, 0.4, 0], dtype=np.float32)
+        cutoff_polygon = np.array([self.c1, [-10, -2, 0], self.c4])
+
+        # Find new corners and assert correctness
+        corners, lines, factors = add_dummy_point(cutoff_polygon, lines, factors)
+        self.assertTrue(np.array_equal(corners, np.array([self.c1, [-10, -6, 0], [-10, -2, 0], self.c4])))
+        self.assertTrue(np.array_equal(lines, [0, 0, 0, 3]))
+        self.assertAlmostEqual(factors[1], 0.2)
+
+    def test_no_lines_on_line_zero(self):
+        # Mock output from the get_cutoff_points function
+        lines = [1, 2, 3]
+        factors = np.array([0, 0, 0], dtype=np.float32)
+        cutoff_polygon = np.array([self.c2, self.c3, self.c4])
+
+        # Find new corners and assert correctness
+        corners, lines, factors = add_dummy_point(cutoff_polygon, lines, factors)
+        self.assertTrue(np.array_equal(corners, np.array([self.c2, [0, 10, 0], self.c3, self.c4])))
+        self.assertTrue(np.array_equal(lines, [1, 1, 2, 3]))
+        self.assertAlmostEqual(factors[1], 0.5)
 
 
 if __name__ == '__main__':
